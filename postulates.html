@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>הפוסטולטים של מכניקת הקוונטים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Secular+One&family=STIX+Two+Text:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFBFE; --ink:#1B1E4B; --muted:#5A5F86; --accent:#4F5BD5; --accent-soft:#ECEEFE;
+  --rule:#DADDF0; --card:#FFFFFF; --exp:#0E6E62; --exp-soft:#E4F3F0;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#12142E; --ink:#E8E9F7; --muted:#A3A7CF; --accent:#8E97FF; --accent-soft:#1E2250;
+    --rule:#2A2E5A; --card:#181B3C; --exp:#5FD0BE; --exp-soft:#12302C; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#12142E; --ink:#E8E9F7; --muted:#A3A7CF; --accent:#8E97FF; --accent-soft:#1E2250;
+  --rule:#2A2E5A; --card:#181B3C; --exp:#5FD0BE; --exp-soft:#12302C; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Frank Ruhl Libre","David Libre",Georgia,serif;font-size:1.08rem;line-height:1.75}
+main{max-width:44rem;margin:0 auto;padding:1.5rem 1.15rem 4rem}
+h1,h2,h3{font-family:"Secular One","Frank Ruhl Libre",sans-serif;font-weight:400;line-height:1.25}
+h1{font-size:2rem;margin:.4rem 0 .6rem}
+h2{font-size:1.5rem;margin:2.8rem 0 .6rem;padding-bottom:.35rem;border-bottom:2px solid var(--accent)}
+h3{font-size:1.12rem;margin:1.3rem 0 .2rem;color:var(--accent)}
+p{margin:.55rem 0}
+.lead{font-size:1.2rem;line-height:1.6;margin:0 0 1.2rem}
+.m{font-family:"STIX Two Text","Cambria Math",serif;white-space:nowrap;unicode-bidi:isolate}
+.en{font-family:"STIX Two Text",Georgia,serif;font-size:.88em;color:var(--muted);unicode-bidi:isolate}
+.f{direction:ltr;text-align:center;font-family:"STIX Two Text","Cambria Math",serif;font-size:1.25rem;
+  margin:.7rem 0;padding:.6rem .5rem;background:var(--accent-soft);border-radius:8px;overflow-x:auto;white-space:nowrap}
+.f .gap{display:inline-block;width:2.2em}
+.wrap{overflow-x:auto;margin:1rem 0}
+table.q{border-collapse:collapse;width:100%;font-size:1.05rem}
+table.q th{font-family:"Secular One",sans-serif;font-weight:400;color:var(--muted);text-align:right;padding:.5rem;border-bottom:2px solid var(--accent)}
+table.q td{padding:.65rem .5rem;border-bottom:1px solid var(--rule);vertical-align:top}
+table.q td.n{font-family:"Secular One",sans-serif;color:var(--accent);width:2.2rem}
+table.q a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--muted)}
+table.q a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.post{background:var(--card);border:1px solid var(--rule);border-inline-start:5px solid var(--accent);
+  border-radius:0 12px 12px 0;padding:1rem 1.15rem 1.1rem;margin:1.4rem 0}
+.post h2{margin-top:0;border:0;padding:0;font-size:1.4rem}
+.post h2 .num{color:var(--accent);margin-inline-end:.4rem}
+.exp{background:var(--exp-soft);border-radius:8px;padding:.7rem .9rem;margin:.8rem 0}
+.exp>b:first-child{color:var(--exp);font-family:"Secular One",sans-serif;font-weight:400;display:block;margin-bottom:.15rem}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem .4rem;margin:.6rem 0 .3rem}
+.flow .lbl{font-family:"Secular One",sans-serif;color:var(--exp);min-width:4.6rem}
+.chip{border:1px solid var(--rule);background:var(--card);border-radius:6px;padding:.1rem .55rem;font-size:.98rem;white-space:nowrap}
+.chip.res{background:var(--exp);color:var(--paper);border-color:var(--exp)}
+.arrow{color:var(--muted)}
+.note{background:var(--accent-soft);border-radius:8px;padding:.7rem .9rem;margin:1rem 0}
+.eqs{display:grid;gap:.75rem;margin:.9rem 0}
+.eqc{border:1px solid var(--rule);border-radius:10px;padding:.6rem .85rem .75rem;background:var(--paper)}
+.eqc .nm{font-family:"Secular One",sans-serif;color:var(--accent);font-size:1.02rem}
+.eqc .f{margin:.45rem 0 .5rem}
+.eqc p{margin:.2rem 0 0}
+.eqc p.sym{color:var(--muted);font-size:.96rem;margin-bottom:.4rem}
+footer{margin-top:3rem;color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:1rem}
+</style>
+</head>
+<body>
+<main id="doc">
+<p style="margin:0 0 .4rem;font-size:.95rem"><a href="index.html" style="color:var(--accent)">← כל העמודים</a></p>
+
+<h1>הפוסטולטים של מכניקת הקוונטים</h1>
+<p class="lead">הפוסטולטים של מכניקת הקוונטים מתרגמים את ארבע השאלות הפיזיקליות הבסיסיות הבאות למתמטיקה:</p>
+
+<div class="wrap"><table class="q">
+<tr><th></th><th>השאלה</th><th>התשובה המתמטית</th></tr>
+<tr><td class="n">1</td><td><a href="#p1">מה זה מצב?</a></td><td>וקטור</td></tr>
+<tr><td class="n">2</td><td><a href="#p2">מה זה גודל שאפשר למדוד?</a></td><td>אופרטור הרמיטי</td></tr>
+<tr><td class="n">3</td><td><a href="#p3">מה קורה כשמודדים?</a></td><td>הסתברות = ריבוע האמפליטודה, ואז קריסה</td></tr>
+<tr><td class="n">4</td><td><a href="#p4">איך המצב משתנה בזמן?</a></td><td>אופרטור אוניטרי</td></tr>
+</table></div>
+
+<h2>מה זה פוסטולט</h2>
+<p><b>פוסטולט</b> (הנחת יסוד, אקסיומה) הוא טענה שמקבלים בלי הוכחה, ומשמשת נקודת התחלה שממנה גוזרים את כל השאר. המילה באה מהלטינית <i>postulare</i>, "לדרוש".</p>
+<p>בפיזיקה, פוסטולטים מוצדקים <b>בניסוי</b> ולא בהיגיון: מניחים אותם, גוזרים מהם תחזיות, ובודקים במעבדה. אין ניסוי אחד ש"הוכיח" פוסטולט, אבל יש ניסויים שמראים <b>למה</b> כל כלל צריך להיראות כמו שהוא נראה. הכי טוב לזה הוא ניסוי שטרן-גרלך.</p>
+
+<h2>הניסוי שמסביר הכול: שטרן-גרלך ברצף</h2>
+<p>שולחים אטומים דרך מגנט לא אחיד. קלאסית היינו מצפים למריחה רציפה על המסך. בפועל מתקבלות <b>שתי נקודות בדיוק</b>: ספין "למעלה" (↑) או "למטה" (↓). עכשיו שמים כמה מגנטים בשורה:</p>
+
+<div class="exp">
+  <div class="flow"><span class="lbl">ניסוי א'</span><span class="chip">בוחרים ↑ לאורך z</span><span class="arrow">←</span><span class="chip">מודדים לאורך z</span><span class="arrow">←</span><span class="chip res">100% ↑</span></div>
+  <div class="flow"><span class="lbl">ניסוי ב'</span><span class="chip">בוחרים ↑ לאורך z</span><span class="arrow">←</span><span class="chip">מודדים לאורך x</span><span class="arrow">←</span><span class="chip res">50% / 50%</span></div>
+  <div class="flow"><span class="lbl">ניסוי ג'</span><span class="chip">בוחרים ↑ לאורך z</span><span class="arrow">←</span><span class="chip">בוחרים ↑ לאורך x</span><span class="arrow">←</span><span class="chip">מודדים לאורך z</span><span class="arrow">←</span><span class="chip res">50% / 50%</span></div>
+</div>
+<p>בניסוי ג' המידע שבחרנו בהתחלה <b>נמחק</b>: אחרי מדידה לאורך x, הספין שוב 50/50 לאורך z.</p>
+
+<!-- 1 -->
+<section class="post" id="p1">
+<h2><span class="num">1</span>המצב</h2>
+<p><b>במילים:</b> כל מה שאפשר לדעת על המערכת נמצא באובייקט אחד, $|ψ⟩$, שהוא וקטור במרחב הילברט מרוכב <span class="en">(complex Hilbert space)</span>. כדי לכתוב אותו בפועל בוחרים בסיס ${|i⟩}$, שצריך לעמוד בשתי דרישות:</p>
+<div class="eqs">
+  <div class="eqc">
+    <div class="nm">אורתונורמליות <span class="en">(orthonormality)</span></div>
+    <div class="f">⟨i|j⟩ = δ<sub>ij</sub></div>
+    <p class="sym"><b>סימונים:</b> $i$ ו-$j$ הם מספרי הסידור של וקטורי הבסיס. $δ<sub>ij</sub>$ (הדלתא של קרונקר) שווה 1 כש-$i = j$ ו-0 אחרת, כלומר הוא האיבר ה-$ij$ של מטריצת היחידה.</p>
+    <p>כל וקטור בסיס באורך 1, וכל שני וקטורי בסיס שונים ניצבים זה לזה. פיזיקלית: וקטורי הבסיס הם תוצאות <b>שאפשר להבחין ביניהן בוודאות</b>.</p>
+  </div>
+  <div class="eqc">
+    <div class="nm">יחס השלמות <span class="en">(completeness)</span></div>
+    <div class="f">Σ<sub>i</sub> |i⟩⟨i| = 1</div>
+    <p class="sym"><b>סימונים:</b> $|i⟩⟨i|$ היא ההטלה על וקטור הבסיס $i$: היא משאירה רק את הרכיב של המצב בכיוון שלו. ה-1 בצד ימין הוא <b>אופרטור הזהות</b>, כלומר מטריצת היחידה: הפעולה שלא משנה אף וקטור.</p>
+    <p>וקטורי הבסיס <b>מכסים את כל האפשרויות</b>: אם מטילים מצב על כל אחד מהם ומחברים, מקבלים בחזרה את המצב המקורי. אף כיוון לא חסר.</p>
+  </div>
+</div>
+<p>כשהבסיס עומד בשתי הדרישות, כל מצב הוא פשוט <b>רשימת אמפליטודות</b>, אחת לכל וקטור בסיס. לספין: $|0⟩$ = למעלה, $|1⟩$ = למטה, והמצב הוא שתי אמפליטודות.</p>
+<div class="exp"><b>למה דווקא וקטור</b>
+<p><b>ניסוי ב':</b> "למעלה לאורך z" נותן 50/50 לאורך x. כלומר אותו מצב חייב להיות כתוב גם כשילוב של "למעלה לאורך x" ו"למטה לאורך x". אובייקט שאפשר לכתוב כשילוב בבסיסים שונים, זה בדיוק וקטור: $|0⟩$ הוא חצי $|+⟩$ ועוד חצי $|−⟩$.</p>
+<p><b>ניסוי שני הסדקים:</b> אמפליטודות מתחברות ומתבטלות כמו גלים. צריך משהו שאפשר לחבר.</p>
+<p><b>ולמה מרוכב:</b> יש שלושה כיוונים, x, y ו-z, וכל אחד מהם נותן 50/50 ביחס לשני האחרים. עם מספרים ממשיים אפשר לסדר רק שני בסיסים כאלה (z ו-x). לבסיס השלישי צריך את $i$, ומכאן $|±i⟩$.</p>
+</div>
+</section>
+
+<!-- 2 -->
+<section class="post" id="p2">
+<h2><span class="num">2</span>גודל שאפשר למדוד</h2>
+<p><b>במילים:</b> לכל גודל מדיד (אנרגיה, ספין, מיקום) מתאים אופרטור הרמיטי <span class="en">(observable)</span>. <b>התוצאות האפשריות של המדידה הן הערכים העצמיים שלו.</b></p>
+<div class="eqs">
+  <div class="eqc">
+    <div class="nm">משוואת הערכים העצמיים <span class="en">(eigenvalue equation)</span></div>
+    <div class="f">A|j⟩ = a<sub>j</sub>|j⟩</div>
+    <p class="sym"><b>סימונים:</b> $A$ הוא האופרטור (מטריצה הרמיטית) שמייצג את הגודל הנמדד, למשל $Z$ למדידת ספין לאורך z.</p>
+    <p>לכל תוצאה אפשרית $a<sub>j</sub>$ יש מצב $|j⟩$ שבו מקבלים אותה <b>בוודאות</b>. $a<sub>j</sub>$ הוא הערך העצמי (התוצאה), ו-$|j⟩$ הוא הווקטור העצמי (המצב ששייך לה).</p>
+  </div>
+  <div class="eqc">
+    <div class="nm">פירוק ספקטרלי <span class="en">(spectral decomposition)</span></div>
+    <div class="f">A = Σ<sub>j</sub> a<sub>j</sub> |j⟩⟨j|</div>
+    <p>האופרטור כולו כתוב כ"טבלה": לכל כיוון $j$, התשובה $a<sub>j</sub>$. כל $|j⟩⟨j|$ הוא הטלה על הכיוון הזה. למשל $Z$ הוא $(+1)$ כפול ההטלה על $|0⟩$, ועוד $(−1)$ כפול ההטלה על $|1⟩$.</p>
+  </div>
+</div>
+<p><b>למה הרמיטי:</b> תוצאה של מדידה היא מספר ממשי, ותוצאות שונות צריכות להיות ניתנות להבחנה. אופרטור הרמיטי מבטיח את שניהם: ערכים עצמיים ממשיים ווקטורים עצמיים ניצבים.</p>
+<div class="exp"><b>הניסוי</b>
+<p>שתי נקודות בלבד בשטרן-גרלך: אופרטור עם שני ערכים עצמיים. ובאטומים, קווי הספקטרום הבדידים: אנרגיות בדידות, שהן הערכים העצמיים של ההמילטוניאן.</p>
+</div>
+</section>
+
+<!-- 3 -->
+<section class="post" id="p3">
+<h2><span class="num">3</span>מדידה <span class="en">(Born rule)</span></h2>
+<p><b>במילים:</b> התוצאה אקראית. ההסתברות לקבל $a<sub>k</sub>$ היא ריבוע הגודל של האמפליטודה של $|k⟩$. ומיד אחרי המדידה, המערכת <b>נמצאת</b> ב-$|k⟩$.</p>
+<div class="eqs">
+  <div class="eqc">
+    <div class="nm">כלל בורן <span class="en">(Born rule)</span></div>
+    <div class="f">p(a<sub>k</sub>) = |⟨k|ψ⟩|²</div>
+    <p class="sym"><b>סימונים:</b> $p(a<sub>k</sub>)$ היא ההסתברות לקבל את התוצאה $a<sub>k</sub>$, ו-$|k⟩$ הוא הווקטור העצמי ששייך לה. $|…|²$ הוא ריבוע הגודל של מספר מרוכב.</p>
+    <p>$⟨k|ψ⟩$ הוא "כמה מ-$ψ$ נמצא בכיוון $k$", כלומר האמפליטודה. הריבוע של הגודל שלה הוא ההסתברות לקבל את התוצאה $a<sub>k</sub>$.</p>
+  </div>
+  <div class="eqc">
+    <div class="nm">פירוק לאמפליטודות ונרמול</div>
+    <div class="f">|ψ⟩ = Σ<sub>k</sub> C<sub>k</sub>|k⟩,&nbsp;&nbsp; Σ<sub>k</sub> |C<sub>k</sub>|² = 1</div>
+    <p><b>החלק הראשון:</b> כל מצב הוא שילוב של הווקטורים העצמיים, עם מקדמים $C<sub>k</sub>$. אלה בדיוק האמפליטודות מהנוסחה הקודמת, $C<sub>k</sub> = ⟨k|ψ⟩$.<br><b>החלק השני:</b> סכום ריבועי האמפליטודות הוא 1, כלומר ההסתברויות לכל התוצאות מסתכמות ל-100%.</p>
+  </div>
+  <div class="eqc">
+    <div class="nm">קריסה <span class="en">(collapse)</span></div>
+    <div class="f">|ψ′⟩ = P<sub>k</sub>|ψ⟩ / √p(a<sub>k</sub>)</div>
+    <p class="sym"><b>סימונים:</b> $|ψ′⟩$ (עם פסיק עליון) הוא המצב אחרי המדידה. $P<sub>k</sub> = |k⟩⟨k|$ היא ההטלה על $|k⟩$.</p>
+    <p>המצב אחרי שהתקבלה התוצאה $a<sub>k</sub>$: מטילים את המצב על $|k⟩$ (זה $P<sub>k</sub>$), ומחלקים בשורש ההסתברות כדי שהאורך יחזור להיות 1. בפועל, המצב אחרי המדידה הוא $|k⟩$.</p>
+  </div>
+</div>
+<div class="note"><b>ההבחנה החשובה:</b> $C<sub>k</sub>$ אומר <b>כמה סביר</b> לקבל תוצאה. $a<sub>k</sub>$ אומר <b>מה</b> התוצאה. אין ביניהם קשר. למשל $|+⟩$ במדידת $Z$: שתי האמפליטודות $1/√2$, אז 50% לכל תוצאה. התוצאות עצמן הן $+1$ ו-$−1$. הממוצע הוא 0, אף שאף פעם לא מודדים 0.</div>
+<div class="exp"><b>הניסויים</b>
+<p><b>ניסוי ב':</b> $50/50 = (1/√2)²$.</p>
+<p><b>שני סדקים עם אלקטרון בודד:</b> כל נקודה על המסך אקראית, אבל אחרי אלפי נקודות התבנית היא בדיוק ריבוע האמפליטודה.</p>
+<p><b>הקריסה:</b> ניסוי א' מראה שהתוצאה חוזרת על עצמה, כי המצב "נשאר" ב-$|k⟩$. ניסוי ג' מראה שמדידה משנה את המצב: מדידת x הפכה את האטום ל-$|+⟩$, ולכן z חזר להיות 50/50.</p>
+</div>
+</section>
+
+<!-- 4 -->
+<section class="post" id="p4">
+<h2><span class="num">4</span>התפתחות בזמן</h2>
+<p><b>במילים:</b> בין מדידות, מערכת סגורה משתנה באופן חלק, צפוי והפיך, והשינוי הוא אופרטור אוניטרי.</p>
+<div class="eqs">
+  <div class="eqc">
+    <div class="nm">התפתחות אוניטרית <span class="en">(unitary evolution)</span></div>
+    <div class="f">|ψ(t)⟩ = U|ψ(0)⟩,&nbsp;&nbsp; U<sup>†</sup>U = 1</div>
+    <p class="sym"><b>סימונים:</b> $U$ הוא אופרטור ההתפתחות בזמן. $U<sup>†</sup>$ הוא הצמוד ההרמיטי שלו (שחלוף והצמדה), וה-1 הוא שוב אופרטור הזהות. כלומר $U<sup>†</sup>$ מבטל את $U$.</p>
+    <p><b>החלק הראשון:</b> המצב בזמן $t$ מתקבל מהמצב ההתחלתי על ידי הפעלת אופרטור אחד, $U$.<br><b>החלק השני:</b> $U$ אוניטרי, ולכן הוא משמר את אורך הווקטור. כך ההסתברויות ממשיכות להסתכם ל-100% לאורך כל הזמן. הדוגמה הפשוטה ביותר היא מטריצת הסיבוב $R(θ)$.</p>
+  </div>
+  <div class="eqc">
+    <div class="nm">משוואת שרדינגר <span class="en">(Schrödinger equation)</span></div>
+    <div class="f">iħ d|ψ⟩/dt = H|ψ⟩</div>
+    <p class="sym"><b>סימונים:</b> $i$ כאן הוא היחידה המדומה, $ħ$ הוא קבוע פלאנק המצומצם, ו-$d|ψ⟩/dt$ הוא קצב השינוי של המצב בזמן. $H$ כאן הוא ההמילטוניאן, לא שער הדמרד.</p>
+    <p>הנוסחה הזו אומרת <b>איזה</b> $U$: קצב השינוי של המצב נקבע על ידי ההמילטוניאן $H$, אופרטור האנרגיה. על ספירת בלוך, $H$ קובע סביב איזה ציר החץ מסתובב ובאיזו מהירות.</p>
+  </div>
+</div>
+<div class="exp"><b>הניסויים</b>
+<p><b>נקיפת לרמור ו-NMR:</b> ספין בשדה מגנטי מסתובב באופן חלק ורציף סביב השדה. זה האות שמודדים ב-NMR וב-MRI.</p>
+<p><b>תנודות ראבי:</b> כשמאירים על ספין בתדר הנכון, הוא עובר הלוך וחזור בין $|0⟩$ ל-$|1⟩$ בצורה חלקה. זה בדיוק $R(θ)$ כשהזווית גדלה עם הזמן.</p>
+<p><b>הד ספין</b> <span class="en">(spin echo, Hahn 1950)</span>: ספינים שנראים כאילו "התפזרו" ואיבדו את האות, חוזרים ומתאחדים אחרי פולס של 180°. ההתפתחות הייתה הפיכה, ושום מידע לא אבד.</p>
+</div>
+</section>
+
+<h2>המתח בין פוסטולט 3 לפוסטולט 4</h2>
+<p>שני הפוסטולטים האחרונים נראים כמו שני חוקים שונים. <b>התפתחות</b> היא חלקה, צפויה והפיכה. <b>מדידה</b> היא פתאומית, אקראית ובלתי הפיכה. מכניקת הקוונטים מחליפה ביניהן, והשאלה איך שתיהן מתיישבות נקראת "בעיית המדידה".</p>
+<p>ההסבר המקובל: מכשיר המדידה נמצא <b>מחוץ</b> למערכת. בזמן המדידה המערכת כבר לא סגורה, ולכן פוסטולט 4 לא חל עליה.</p>
+
+<footer>גרסה 4.</footer>
+</main>
+<script>
+(function(){
+  var doc=document.getElementById('doc');
+  doc.innerHTML=doc.innerHTML.replace(/\$([^$]+)\$/g,'<bdi dir="ltr" class="m">$1</bdi>');
+})();
+</script>
+</body>
+</html>

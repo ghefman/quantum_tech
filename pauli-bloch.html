@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מטריצות פאולי וספירת בלוך</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Secular+One&family=STIX+Two+Text:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFBFE; --ink:#1B1E4B; --muted:#5A5F86; --accent:#4F5BD5; --accent-soft:#ECEEFE;
+  --rule:#DADDF0; --card:#FFFFFF;
+  --zc:#C2543A; --xc:#5B4BC8; --yc:#0E7C6E;
+  --zs:#FBEAE5; --xs:#EEECFB; --ys:#E3F4F1;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#12142E; --ink:#E8E9F7; --muted:#A3A7CF; --accent:#8E97FF; --accent-soft:#1E2250;
+    --rule:#2A2E5A; --card:#181B3C;
+    --zc:#F08E74; --xc:#A99CFF; --yc:#5FD0BE;
+    --zs:#33201C; --xs:#24204A; --ys:#12302C; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#12142E; --ink:#E8E9F7; --muted:#A3A7CF; --accent:#8E97FF; --accent-soft:#1E2250;
+  --rule:#2A2E5A; --card:#181B3C;
+  --zc:#F08E74; --xc:#A99CFF; --yc:#5FD0BE;
+  --zs:#33201C; --xs:#24204A; --ys:#12302C; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Frank Ruhl Libre","David Libre",Georgia,serif;font-size:1.08rem;line-height:1.75}
+main{max-width:44rem;margin:0 auto;padding:1.5rem 1.15rem 4rem}
+h1,h2,h3{font-family:"Secular One","Frank Ruhl Libre",sans-serif;font-weight:400;line-height:1.25}
+h1{font-size:2rem;margin:.4rem 0 .3rem}
+h2{font-size:1.5rem;margin:2.8rem 0 .6rem;padding-bottom:.35rem;border-bottom:2px solid var(--accent)}
+h3{font-size:1.25rem;margin:0 0 .3rem}
+p{margin:.55rem 0}
+.sub{color:var(--muted);margin:0 0 1rem}
+.m{font-family:"STIX Two Text","Cambria Math",serif;white-space:nowrap;unicode-bidi:isolate}
+.en{font-family:"STIX Two Text",Georgia,serif;font-size:.88em;color:var(--muted);unicode-bidi:isolate}
+
+/* sphere */
+.stage{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:1rem .8rem 1.1rem;margin:1.2rem 0}
+.stage svg{display:block;width:100%;max-width:520px;margin:0 auto;direction:ltr}
+.gates{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;margin:.4rem 0 .8rem}
+.gates button{font-family:"STIX Two Text",serif;font-size:1.15rem;min-width:3rem;padding:.35rem .9rem;border-radius:8px;
+  border:1.5px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}
+.gates button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
+.gates button.reset{font-family:"Frank Ruhl Libre",serif;font-size:1rem;border-color:var(--rule);color:var(--muted)}
+.gates button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.panel{min-height:4.2rem;text-align:center;color:var(--muted);font-size:1rem}
+.panel b{color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:.4rem 1.2rem;font-size:.95rem;margin-top:.6rem}
+.dot{display:inline-block;width:.7em;height:.7em;border-radius:50%;margin-inline-end:.35em;vertical-align:baseline}
+
+/* math */
+.eq{direction:ltr;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem;
+  font-family:"STIX Two Text",serif;font-size:1.35rem;margin:.8rem 0;overflow-x:auto}
+.mat{display:inline-flex;align-items:stretch;vertical-align:middle;direction:ltr}
+.mat::before,.mat::after{content:"";width:.32em;border:1.6px solid currentColor}
+.mat::before{border-right:0;border-radius:.7em 0 0 .7em}
+.mat::after{border-left:0;border-radius:0 .7em .7em 0}
+.g2,.g1{display:grid;gap:.12em .7em;padding:.22em .4em;text-align:center}
+.g2{grid-template-columns:repeat(2,minmax(1.5em,auto))}
+.g1{grid-template-columns:minmax(1.2em,auto)}
+.frac{display:inline-flex;flex-direction:column;align-items:center;font-size:.85em;line-height:1.15;vertical-align:middle}
+.frac>span:last-child{border-top:1.3px solid currentColor;padding:0 .15em}
+
+/* gate cards */
+.gate{border-inline-start:5px solid var(--accent);background:var(--card);border-radius:0 12px 12px 0;
+  padding:1rem 1.1rem;margin:1.2rem 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);border-inline-end:1px solid var(--rule)}
+.gate.x{border-inline-start-color:var(--xc)} .gate.y{border-inline-start-color:var(--yc)} .gate.z{border-inline-start-color:var(--zc)}
+.gate.x h3{color:var(--xc)} .gate.y h3{color:var(--yc)} .gate.z h3{color:var(--zc)} .gate.h h3{color:var(--accent)}
+.map{width:100%;border-collapse:collapse;margin:.6rem 0 .2rem;font-size:1rem}
+.map td{padding:.3rem .4rem;border-bottom:1px solid var(--rule);vertical-align:middle}
+.map td.k{direction:ltr;text-align:left;font-family:"STIX Two Text",serif;font-size:1.1rem;white-space:nowrap;width:46%}
+.map td.n{color:var(--muted);font-size:.95rem}
+.tag{display:inline-block;font-size:.85rem;padding:.05rem .5rem;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+.note{background:var(--accent-soft);border-radius:8px;padding:.7rem .9rem;margin:1rem 0;font-size:1rem}
+.bases{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:.6rem;margin:.8rem 0}
+.bases div{border-radius:8px;padding:.6rem .8rem}
+.bases .bz{background:var(--zs)} .bases .bx{background:var(--xs)} .bases .by{background:var(--ys)}
+.bases b{font-family:"Secular One",sans-serif;font-weight:400}
+.bases .cols{display:flex;align-items:center;flex-wrap:wrap;gap:.3rem;font-size:1.1rem}
+.bases .f{direction:ltr;text-align:left;font-family:"STIX Two Text",serif;font-size:1.02rem;line-height:1.6}
+.ops-wrap{overflow-x:auto;margin:1rem 0}
+.ops{border-collapse:collapse;width:100%;min-width:36rem;font-size:1rem}
+.ops th{font-family:"Secular One",sans-serif;font-weight:400;color:var(--muted);text-align:right;padding:.5rem;border-bottom:2px solid var(--accent)}
+.ops td{padding:.75rem .5rem;border-bottom:1px solid var(--rule);vertical-align:top}
+.ops td.kind{font-family:"Secular One",sans-serif;color:var(--accent);white-space:nowrap}
+.ops .eq{font-size:1.15rem;justify-content:flex-end;margin:.1rem 0 .5rem}
+.ops ul{list-style:none;margin:.2rem 0 0;padding:0}
+.ops li{margin:.15rem 0}
+footer{margin-top:3rem;color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:1rem}
+</style>
+</head>
+<body>
+<main id="doc">
+<p style="margin:0 0 .4rem;font-size:.95rem"><a href="index.html" style="color:var(--accent)">← כל העמודים</a></p>
+
+<h1>מטריצות פאולי וספירת בלוך</h1>
+<p class="sub">איך X, Y, Z והדמרד מזיזים מצב של קיוביט</p>
+
+<p>מצב של קיוביט (עד כדי פאזה גלובלית) הוא <b>חץ שמצביע לנקודה על כדור</b>.</p>
+
+<section class="stage" aria-label="ספירת בלוך אינטראקטיבית">
+  <div class="gates" role="group" aria-label="בחירת שער">
+    <button type="button" data-g="X" aria-pressed="false">X</button>
+    <button type="button" data-g="Y" aria-pressed="false">Y</button>
+    <button type="button" data-g="Z" aria-pressed="false">Z</button>
+    <button type="button" data-g="H" aria-pressed="false">H</button>
+    <button type="button" class="reset" data-g="R">איפוס</button>
+  </div>
+  <svg id="sphere" viewBox="0 0 560 480" role="img" aria-labelledby="sph-t sph-d">
+    <title id="sph-t">ספירת בלוך עם ששת מצבי הבסיס</title>
+    <desc id="sph-d">ציר z אנכי, ציר x אופקי וציר y לעומק הדף. |0⟩ ו-|1⟩ בקטבים, |+⟩ ו-|−⟩ על ציר x, |+i⟩ ו-|−i⟩ על ציר y. לחיצה על שער מסובבת את כל המצבים חצי סיבוב סביב ציר השער.</desc>
+    <g id="static"></g>
+    <g id="trails"></g>
+    <g id="axisHi"></g>
+    <g id="pts"></g>
+  </svg>
+  <div class="panel" id="panel" aria-live="polite">בחר שער כדי לראות לאן הוא שולח כל אחד מששת המצבים. כל לחיצה ממשיכה מהמצב הנוכחי.</div>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--zc)"></span>בסיס Z: הקטבים</span>
+    <span><span class="dot" style="background:var(--xc)"></span>בסיס X: לאורך ציר x</span>
+    <span><span class="dot" style="background:var(--yc)"></span>בסיס Y: לאורך ציר y</span>
+  </div>
+</section>
+
+<h2>ששת מצבי הבסיס</h2>
+<p>כל זוג נקודות מנוגדות על הכדור הוא בסיס: שני מצבים ניצבים. בשפה של בסיס Z:</p>
+<div class="bases">
+  <div class="bz"><b>בסיס Z</b> <span class="en">(computational basis)</span><div class="f cols">|0⟩ = <span class="mat"><span class="g1"><span>1</span><span>0</span></span></span></div><div class="f cols">|1⟩ = <span class="mat"><span class="g1"><span>0</span><span>1</span></span></span></div></div>
+  <div class="bx"><b>בסיס X</b><div class="f">|+⟩ = (|0⟩ + |1⟩)/√2<br>|−⟩ = (|0⟩ − |1⟩)/√2</div></div>
+  <div class="by"><b>בסיס Y</b><div class="f">|+i⟩ = (|0⟩ + i|1⟩)/√2<br>|−i⟩ = (|0⟩ − i|1⟩)/√2</div></div>
+</div>
+<p class="sub">סימון חלופי מקובל: $|0ₓ⟩ = |+⟩$, $|1ₓ⟩ = |−⟩$, $|0<sub>y</sub>⟩ = |+i⟩$, $|1<sub>y</sub>⟩ = |−i⟩$.</p>
+
+<h2>מטריצות פאולי</h2>
+
+<div class="note"><b>איך לקרוא את הטבלאות:</b> לפעמים לפני המצב שמתקבל עומד מספר, כמו $i$ או $−1$. המספר הזה מכפיל את <b>כל</b> הווקטור, ולכן הוא פאזה גלובלית: על הכדור הנקודה נמצאת בדיוק באותו מקום, ואף מדידה לא תבחין בהבדל. לכן $i·|−i⟩$ הוא פשוט המצב $|−i⟩$. ובמצבים שנשארים על ציר הסיבוב, המספר הזה הוא בדיוק <b>הערך העצמי</b> שלהם.</div>
+
+<article class="gate x">
+  <h3>X: היפוך ביט <span class="en">(bit flip, NOT)</span></h3>
+  <div class="eq">X = <span class="mat"><span class="g2"><span>0</span><span>1</span><span>1</span><span>0</span></span></span></div>
+  <p><b>סיבוב של 180° סביב ציר x.</b> הקטבים מתחלפים (0 ↔ 1), וגם ציר y מתהפך ($|+i⟩ ↔ |−i⟩$). רק $|+⟩$ ו-$|−⟩$, שיושבים על ציר x, נשארים במקום.</p>
+  <table class="map">
+    <tr><td class="k">X|0⟩ = |1⟩</td><td class="n">מתחלפים</td></tr>
+    <tr><td class="k">X|1⟩ = |0⟩</td><td class="n">מתחלפים</td></tr>
+    <tr><td class="k">X|+i⟩ = i·|−i⟩</td><td class="n">מתחלפים, עם פאזה</td></tr>
+    <tr><td class="k">X|−i⟩ = −i·|+i⟩</td><td class="n">מתחלפים, עם פאזה</td></tr>
+    <tr><td class="k">X|+⟩ = |+⟩</td><td class="n"><span class="tag">על הציר</span> ערך עצמי $+1$</td></tr>
+    <tr><td class="k">X|−⟩ = −|−⟩</td><td class="n"><span class="tag">על הציר</span> ערך עצמי $−1$</td></tr>
+  </table>
+</article>
+
+<article class="gate y">
+  <h3>Y: היפוך ביט וגם פאזה</h3>
+  <div class="eq">Y = <span class="mat"><span class="g2"><span>0</span><span>−i</span><span>i</span><span>0</span></span></span></div>
+  <p><b>סיבוב של 180° סביב ציר y.</b> הקטבים מתחלפים, וגם ציר x מתהפך ($|+⟩ ↔ |−⟩$). $|+i⟩$ ו-$|−i⟩$ נשארים.</p>
+  <table class="map">
+    <tr><td class="k">Y|0⟩ = i·|1⟩</td><td class="n">מתחלפים, עם פאזה</td></tr>
+    <tr><td class="k">Y|1⟩ = −i·|0⟩</td><td class="n">מתחלפים, עם פאזה</td></tr>
+    <tr><td class="k">Y|+⟩ = −i·|−⟩</td><td class="n">מתחלפים, עם פאזה</td></tr>
+    <tr><td class="k">Y|−⟩ = i·|+⟩</td><td class="n">מתחלפים, עם פאזה</td></tr>
+    <tr><td class="k">Y|+i⟩ = |+i⟩</td><td class="n"><span class="tag">על הציר</span> ערך עצמי $+1$</td></tr>
+    <tr><td class="k">Y|−i⟩ = −|−i⟩</td><td class="n"><span class="tag">על הציר</span> ערך עצמי $−1$</td></tr>
+  </table>
+</article>
+
+<article class="gate z">
+  <h3>Z: היפוך פאזה <span class="en">(phase flip)</span></h3>
+  <div class="eq">Z = <span class="mat"><span class="g2"><span>1</span><span>0</span><span>0</span><span>−1</span></span></span></div>
+  <p><b>סיבוב של 180° סביב הציר האנכי.</b> הקטבים לא זזים, אבל כל קו המשווה מסתובב חצי סיבוב: $|+⟩ ↔ |−⟩$ וגם $|+i⟩ ↔ |−i⟩$. במדידה לאורך z לא תראה הבדל; ההבדל יופיע רק אחרי התאבכות.</p>
+  <table class="map">
+    <tr><td class="k">Z|+⟩ = |−⟩</td><td class="n">מתחלפים</td></tr>
+    <tr><td class="k">Z|−⟩ = |+⟩</td><td class="n">מתחלפים</td></tr>
+    <tr><td class="k">Z|+i⟩ = |−i⟩</td><td class="n">מתחלפים</td></tr>
+    <tr><td class="k">Z|−i⟩ = |+i⟩</td><td class="n">מתחלפים</td></tr>
+    <tr><td class="k">Z|0⟩ = |0⟩</td><td class="n"><span class="tag">על הציר</span> ערך עצמי $+1$</td></tr>
+    <tr><td class="k">Z|1⟩ = −|1⟩</td><td class="n"><span class="tag">על הציר</span> ערך עצמי $−1$</td></tr>
+  </table>
+</article>
+
+<p>ולשלמות: <b>I</b>, מטריצת היחידה, לא עושה כלום. היא לא ציר, אבל יחד עם X, Y, Z כל מטריצה $2×2$ היא צירוף של ארבעתן.</p>
+<div class="eq">I = <span class="mat"><span class="g2"><span>1</span><span>0</span><span>0</span><span>1</span></span></span></div>
+
+<h2>הדמרד <span class="en">(Hadamard gate)</span></h2>
+
+<div class="eq">H = <span class="frac"><span>1</span><span>√2</span></span><span class="mat"><span class="g2"><span>1</span><span>1</span><span>1</span><span>−1</span></span></span></div>
+
+<p>הדמרד הוא השער שהופך מצב בסיס לסופרפוזיציה שווה, ולהפך.</p>
+
+<article class="gate h">
+  <h3>מה H עושה לששת המצבים</h3>
+  <table class="map">
+    <tr><td class="k">H|0⟩ = |+⟩</td><td class="n">מבסיס Z לבסיס X</td></tr>
+    <tr><td class="k">H|1⟩ = |−⟩</td><td class="n">מבסיס Z לבסיס X</td></tr>
+    <tr><td class="k">H|+⟩ = |0⟩</td><td class="n">ובחזרה</td></tr>
+    <tr><td class="k">H|−⟩ = |1⟩</td><td class="n">ובחזרה</td></tr>
+    <tr><td class="k">H|+i⟩ = e<sup>iπ/4</sup>·|−i⟩</td><td class="n">ציר y מתהפך, עם פאזה</td></tr>
+    <tr><td class="k">H|−i⟩ = e<sup>−iπ/4</sup>·|+i⟩</td><td class="n">ציר y מתהפך, עם פאזה</td></tr>
+  </table>
+</article>
+
+<p><b>האינטואיציה:</b> H הוא <b>סיבוב של 180° סביב ציר אלכסוני</b>, באמצע בין ציר x לציר z. חצי סיבוב סביב האלכסון הזה מחליף את ציר x עם ציר z, ולכן הוא מחליף בין בסיס Z לבסיס X. ציר y, שניצב לאלכסון, מתהפך. (לחץ על H בכדור למעלה.)</p>
+<p>יש לזה גם צורה אלגברית: $H = (X + Z)/√2$, כלומר "חצי X וחצי Z". הציר של H הוא, פשוטו כמשמעו, הממוצע של הציר של X ושל Z.</p>
+<p><b>פעמיים H מחזיר להתחלה:</b> $H·H = I$. שני חצאי סיבוב סביב אותו ציר הם סיבוב שלם.</p>
+
+<div class="note"><b>למה זה שימושי:</b> H הוא "מתרגם" בין שפת Z לשפת X. רוב המחשבים הקוונטיים יודעים למדוד רק לאורך z. כדי למדוד לאורך x, מפעילים קודם H ואז מודדים z: מה שהיה $|+⟩$ יוצא $0$, ומה שהיה $|−⟩$ יוצא $1$.</div>
+
+<h2>סוגי אופרטורים</h2>
+<div class="ops-wrap"><table class="ops">
+<tr><th>סוג</th><th>הגדרה</th><th>ערכים עצמיים</th><th>דוגמה</th></tr>
+<tr>
+<td class="kind">אוניטרי <span class="en">(unitary)</span></td>
+<td>$UU<sup>†</sup> = U<sup>†</sup>U = I$<br><span class="n" style="color:var(--muted);font-size:.95rem">ההופכי הוא הצמוד. משמר אורכים וזוויות: סיבוב של הכדור.</span></td>
+<td>על מעגל היחידה: מספרים מרוכבים בגודל 1</td>
+<td>
+<b>S</b>, שער פאזה <span class="en">(phase gate)</span>
+<div class="eq">S = <span class="mat"><span class="g2"><span>1</span><span>0</span><span>0</span><span>i</span></span></span></div>
+רבע סיבוב סביב ציר z:
+<ul>
+<li>$|0⟩ → |0⟩,&nbsp; |1⟩ → i·|1⟩$ (הקטבים לא זזים)</li>
+<li>$|+⟩ → |+i⟩ → |−⟩ → |−i⟩ → |+⟩$</li>
+<li>ערכים עצמיים: $1$ ו-$i$</li>
+</ul>
+<hr style="border:0;border-top:1px dashed var(--rule);margin:.9rem 0">
+<b>R(θ)</b>, מטריצת סיבוב <span class="en">(rotation matrix)</span>
+<div class="eq">R(θ) = <span class="mat"><span class="g2"><span>cos θ</span><span>−sin θ</span><span>sin θ</span><span>cos θ</span></span></span></div>
+<ul>
+<li>מסובבת את הווקטור בזווית θ במרחב הילברט</li>
+<li>על הכדור: סיבוב בזווית 2θ סביב ציר y</li>
+<li>ערכים עצמיים: $e<sup>iθ</sup>$ ו-$e<sup>−iθ</sup>$</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td class="kind">הרמיטי <span class="en">(Hermitian)</span></td>
+<td>$A = A<sup>†</sup>$<br><span class="n" style="color:var(--muted);font-size:.95rem">שווה לצמוד של עצמו. מייצג גודל שאפשר למדוד.</span></td>
+<td>ממשיים</td>
+<td>$X, Y, Z, H$<br><span style="color:var(--muted);font-size:.95rem">(H = הדמרד)</span></td>
+</tr>
+</table></div>
+<p class="sub">X, Y, Z ו-H הם גם הרמיטיים וגם אוניטריים, ולכן הערכים העצמיים שלהם חייבים להיות גם ממשיים וגם בגודל 1: בדיוק $+1$ ו-$−1$. S אוניטרי אבל לא הרמיטי, ולכן הוא שער ולא גודל שאפשר למדוד.</p>
+
+<h2>הדמיה: S ו-R(θ)</h2>
+<p>כל לחיצה ממשיכה מהמקום הנוכחי.<br>
+$S$ הוא רבע סיבוב סביב ציר z.<br>
+$R(θ)$ מסובבת את הווקטור בזווית $θ$ במרחב הילברט, ועל הכדור זה נראה כסיבוב בזווית <b>כפולה</b>, $2θ$, סביב ציר y.</p>
+<section class="stage" aria-label="ספירת בלוך: S ו-R">
+  <div class="gates" role="group" aria-label="בחירת פעולה" id="gates2">
+    <button type="button" data-g="S" aria-pressed="false">S</button>
+    <button type="button" data-g="R22" aria-pressed="false">R(22.5°)</button>
+    <button type="button" data-g="R45" aria-pressed="false">R(45°)</button>
+    <button type="button" data-g="R90" aria-pressed="false">R(90°)</button>
+    <button type="button" data-g="R180" aria-pressed="false">R(180°)</button>
+    <button type="button" class="reset" data-g="RESET">איפוס</button>
+  </div>
+  <svg id="sphere2" viewBox="0 0 560 480" role="img" aria-labelledby="sph2-t sph2-d">
+    <title id="sph2-t">ספירת בלוך: הפעלת S ו-R(θ)</title>
+    <desc id="sph2-d">ששת מצבי הבסיס על הכדור. S מסובב אותם רבע סיבוב סביב ציר z; R(θ) מסובבת אותם בזווית 2θ סביב ציר y.</desc>
+    <g id="static2"></g><g id="trails2"></g><g id="axisHi2"></g><g id="pts2"></g>
+  </svg>
+  <div class="panel" id="panel2" aria-live="polite">לחץ על S כמה פעמים ברצף, או נסה את R בזוויות שונות.</div>
+</section>
+
+<footer>גרסה 8.</footer>
+</main>
+
+<script>
+(function(){
+  var doc=document.getElementById('doc');
+  doc.innerHTML=doc.innerHTML.replace(/\$([^$]+)\$/g,'<bdi dir="ltr" class="m">$1</bdi>');
+
+  var NS='http://www.w3.org/2000/svg';
+  var C=[280,245], R=165;
+  var EX=[R,0], EY=[0.43*R,-0.26*R], EZ=[0,-R];
+  function proj(v){return [C[0]+v[0]*EX[0]+v[1]*EY[0]+v[2]*EZ[0], C[1]+v[0]*EX[1]+v[1]*EY[1]+v[2]*EZ[1]];}
+  function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);(p||null)&&p.appendChild(e);return e;}
+
+  var st=document.getElementById('static');
+  el('circle',{cx:C[0],cy:C[1],r:R,fill:'none',stroke:'var(--muted)','stroke-width':1.2},st);
+  (function(){var d='';for(var i=0;i<=96;i++){var a=i/96*2*Math.PI,q=proj([Math.cos(a),Math.sin(a),0]);d+=(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1);}el('path',{d:d,fill:'none',stroke:'var(--muted)','stroke-width':.7,'stroke-dasharray':'4 4',opacity:.8},st);})();
+  function axis(u,f,lab){
+    var a=proj([u[0]*f,u[1]*f,u[2]*f]), b=proj([-u[0]*f,-u[1]*f,-u[2]*f]);
+    el('line',{x1:b[0],y1:b[1],x2:a[0],y2:a[1],stroke:'var(--muted)','stroke-width':.7,'stroke-dasharray':'2 4'},st);
+    var t=el('text',{x:a[0],y:a[1],fill:'var(--muted)','font-size':16,'font-family':'STIX Two Text, serif','font-style':'italic','text-anchor':'middle','dominant-baseline':'central'},st);
+    t.textContent=lab;
+  }
+  axis([0,0,1],1.24,'z'); axis([1,0,0],1.22,'x'); axis([0,1,0],2.15,'y');
+
+  var defs=[
+    {id:'k0', v:[0,0,1],  lab:'|0⟩',  col:'var(--zc)'},
+    {id:'k1', v:[0,0,-1], lab:'|1⟩',  col:'var(--zc)'},
+    {id:'kp', v:[1,0,0],  lab:'|+⟩',  col:'var(--xc)'},
+    {id:'km', v:[-1,0,0], lab:'|−⟩',  col:'var(--xc)'},
+    {id:'kpi',v:[0,1,0],  lab:'|+i⟩', col:'var(--yc)'},
+    {id:'kmi',v:[0,-1,0], lab:'|−i⟩', col:'var(--yc)'}
+  ];
+  var pts=document.getElementById('pts'), trails=document.getElementById('trails'), hi=document.getElementById('axisHi');
+  defs.forEach(function(d){
+    d.g=el('g',{},pts);
+    d.c=el('circle',{r:8,fill:d.col,stroke:'var(--paper)','stroke-width':2},d.g);
+    d.t=el('text',{fill:d.col,'font-size':19,'font-family':'STIX Two Text, serif','text-anchor':'middle','dominant-baseline':'central'},d.g);
+    d.t.textContent=d.lab;
+    d.tr=el('polyline',{fill:'none',stroke:d.col,'stroke-width':1.6,'stroke-dasharray':'3 4',opacity:.75},trails);
+    d.cur=d.v.slice(); d.path=[];
+  });
+  function place(d){
+    var p=proj(d.cur), dx=p[0]-C[0], dy=p[1]-C[1], L=Math.hypot(dx,dy)||1;
+    var ox=dx/L, oy=dy/L, a=-0.7, rx=ox*Math.cos(a)-oy*Math.sin(a), ryy=ox*Math.sin(a)+oy*Math.cos(a);
+    d.c.setAttribute('cx',p[0]); d.c.setAttribute('cy',p[1]);
+    d.t.setAttribute('x',p[0]+rx*28); d.t.setAttribute('y',p[1]+ryy*28);
+    d.g.setAttribute('opacity', d.cur[1]>0.2?0.5:1);
+  }
+  defs.forEach(place);
+
+  function rot(v,u,t){
+    var c=Math.cos(t), s=Math.sin(t), d=u[0]*v[0]+u[1]*v[1]+u[2]*v[2];
+    var cr=[u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
+    return [0,1,2].map(function(i){return v[i]*c+cr[i]*s+u[i]*d*(1-c);});
+  }
+  var r2=Math.SQRT1_2;
+  var G={
+    X:{u:[1,0,0], name:'X', axis:'x', text:'<b>X: חצי סיבוב סביב ציר x.</b> <bdi dir="ltr" class="m">|0⟩ ↔ |1⟩</bdi> ו-<bdi dir="ltr" class="m">|+i⟩ ↔ |−i⟩</bdi>. <bdi dir="ltr" class="m">|+⟩</bdi> ו-<bdi dir="ltr" class="m">|−⟩</bdi> על הציר, ולכן לא זזים.'},
+    Y:{u:[0,1,0], name:'Y', axis:'y', text:'<b>Y: חצי סיבוב סביב ציר y.</b> <bdi dir="ltr" class="m">|0⟩ ↔ |1⟩</bdi> ו-<bdi dir="ltr" class="m">|+⟩ ↔ |−⟩</bdi>. <bdi dir="ltr" class="m">|+i⟩</bdi> ו-<bdi dir="ltr" class="m">|−i⟩</bdi> לא זזים.'},
+    Z:{u:[0,0,1], name:'Z', axis:'z', text:'<b>Z: חצי סיבוב סביב ציר z.</b> הקטבים נשארים; <bdi dir="ltr" class="m">|+⟩ ↔ |−⟩</bdi> ו-<bdi dir="ltr" class="m">|+i⟩ ↔ |−i⟩</bdi>.'},
+    H:{u:[r2,0,r2], name:'H', axis:'x+z', text:'<b>H: חצי סיבוב סביב האלכסון בין x ל-z.</b> <bdi dir="ltr" class="m">|0⟩ ↔ |+⟩</bdi>, <bdi dir="ltr" class="m">|1⟩ ↔ |−⟩</bdi>, וציר y מתהפך: <bdi dir="ltr" class="m">|+i⟩ ↔ |−i⟩</bdi>.'}
+  };
+  var panel=document.getElementById('panel'), anim=null;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var seq=[], M=[[1,0,0],[0,1,0],[0,0,1]];
+  function rmat(u){return [0,1,2].map(function(i){return [0,1,2].map(function(j){return 2*u[i]*u[j]-(i===j?1:0);});});}
+  function mul(A,B){return [0,1,2].map(function(i){return [0,1,2].map(function(j){return A[i][0]*B[0][j]+A[i][1]*B[1][j]+A[i][2]*B[2][j];});});}
+  function same(A,B){for(var i=0;i<3;i++)for(var j=0;j<3;j++)if(Math.abs(A[i][j]-B[i][j])>1e-6)return false;return true;}
+  var NAMED=[['I',[[1,0,0],[0,1,0],[0,0,1]]],['X',rmat([1,0,0])],['Y',rmat([0,1,0])],['Z',rmat([0,0,1])],['H',rmat([r2,0,r2])]];
+  function kk(t){return '<bdi dir="ltr" class="m">'+t+'</bdi>';}
+  function seqText(){
+    var html='<div style="margin-top:.45rem">הרצף עד עכשיו: '+kk(seq.join(' → '))+'</div>';
+    if(seq.length<2)return html;
+    for(var n=0;n<NAMED.length;n++){
+      if(same(M,NAMED[n][1])){
+        if(NAMED[n][0]==='I')return html+'<div><b>חזרנו להתחלה:</b> הרצף לא שינה שום מצב. הוא שווה ל-'+kk('I')+' (עד כדי פאזה גלובלית).</div>';
+        if(seq.length===1||NAMED[n][0]===seq[seq.length-1]&&seq.length===1)return html;
+        return html+'<div><b>הרצף שקול לסיבוב אחד: '+kk(NAMED[n][0])+'</b> (עד כדי פאזה גלובלית).</div>';
+      }
+    }
+    return html;
+  }
+  function clearHi(){while(hi.firstChild)hi.removeChild(hi.firstChild);}
+  function resetAll(){
+    if(anim)cancelAnimationFrame(anim);
+    clearHi(); seq=[]; M=[[1,0,0],[0,1,0],[0,0,1]];
+    defs.forEach(function(d){d.cur=d.v.slice();d.path=[];d.tr.setAttribute('points','');place(d);});
+  }
+  function drawAxis(g){
+    var f=1.3, a=proj(g.u.map(function(x){return x*f;})), b=proj(g.u.map(function(x){return -x*f;}));
+    el('line',{x1:b[0],y1:b[1],x2:a[0],y2:a[1],stroke:'var(--accent)','stroke-width':3.5,'stroke-linecap':'round',opacity:.85},hi);
+    if(g.axis==='x+z'){
+      var t=el('text',{x:a[0]-14,y:a[1]-12,fill:'var(--accent)','font-size':16,'font-family':'STIX Two Text, serif','font-style':'italic','text-anchor':'middle'},hi);
+      t.textContent='x+z';
+    }
+  }
+  function run(key){
+    document.querySelectorAll('.gates:not(#gates2) button[data-g]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.g===key?'true':'false');});
+    if(key==='R'){resetAll();panel.innerHTML='בחר שער כדי לראות לאן הוא שולח כל אחד מששת המצבים. כל לחיצה ממשיכה מהמצב הנוכחי.';return;}
+    if(anim)cancelAnimationFrame(anim);
+    clearHi();
+    var g=G[key]; drawAxis(g);
+    seq.push(key); M=mul(rmat(g.u),M);
+    panel.innerHTML=g.text+seqText();
+    var start=defs.map(function(d){return d.cur.slice();});
+    defs.forEach(function(d){d.path=[];});
+    var t0=null, dur=1500;
+    function step(ts){
+      if(t0===null)t0=ts;
+      var k=reduce?1:Math.min(1,(ts-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2, th=Math.PI*e;
+      defs.forEach(function(d,i){
+        d.cur=rot(start[i],g.u,th);
+        var p=proj(d.cur); d.path.push(p[0].toFixed(1)+','+p[1].toFixed(1));
+        d.tr.setAttribute('points',d.path.join(' ')); place(d);
+      });
+      if(k<1)anim=requestAnimationFrame(step);
+    }
+    anim=requestAnimationFrame(step);
+  }
+  document.querySelectorAll('.gates:not(#gates2) button').forEach(function(b){b.addEventListener('click',function(){run(b.dataset.g);});});
+})();
+</script>
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg', C=[280,245], R=165;
+  var EX=[R,0], EY=[0.43*R,-0.26*R], EZ=[0,-R];
+  function proj(v){return [C[0]+v[0]*EX[0]+v[1]*EY[0]+v[2]*EZ[0], C[1]+v[0]*EX[1]+v[1]*EY[1]+v[2]*EZ[1]];}
+  function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function rot(v,u,t){var c=Math.cos(t),s=Math.sin(t),d=u[0]*v[0]+u[1]*v[1]+u[2]*v[2];
+    var cr=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+    return [0,1,2].map(function(i){return v[i]*c+cr[i]*s+u[i]*d*(1-c);});}
+  var st=document.getElementById('static2');
+  el('circle',{cx:C[0],cy:C[1],r:R,fill:'none',stroke:'var(--muted)','stroke-width':1.2},st);
+  (function(){var d='';for(var i=0;i<=96;i++){var a=i/96*2*Math.PI,q=proj([Math.cos(a),Math.sin(a),0]);d+=(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1);}el('path',{d:d,fill:'none',stroke:'var(--muted)','stroke-width':.7,'stroke-dasharray':'4 4',opacity:.8},st);})();
+  function axis(u,f,lab){var a=proj(u.map(function(x){return x*f;})),b=proj(u.map(function(x){return -x*f;}));
+    el('line',{x1:b[0],y1:b[1],x2:a[0],y2:a[1],stroke:'var(--muted)','stroke-width':.7,'stroke-dasharray':'2 4'},st);
+    var t=el('text',{x:a[0],y:a[1],fill:'var(--muted)','font-size':16,'font-family':'STIX Two Text, serif','font-style':'italic','text-anchor':'middle','dominant-baseline':'central'},st);t.textContent=lab;}
+  axis([0,0,1],1.24,'z'); axis([1,0,0],1.22,'x'); axis([0,1,0],2.15,'y');
+  var defs=[{v:[0,0,1],lab:'|0⟩',col:'var(--zc)'},{v:[0,0,-1],lab:'|1⟩',col:'var(--zc)'},
+    {v:[1,0,0],lab:'|+⟩',col:'var(--xc)'},{v:[-1,0,0],lab:'|−⟩',col:'var(--xc)'},
+    {v:[0,1,0],lab:'|+i⟩',col:'var(--yc)'},{v:[0,-1,0],lab:'|−i⟩',col:'var(--yc)'}];
+  var pts=document.getElementById('pts2'),trails=document.getElementById('trails2'),hi=document.getElementById('axisHi2');
+  defs.forEach(function(d){d.g=el('g',{},pts);
+    d.c=el('circle',{r:8,fill:d.col,stroke:'var(--paper)','stroke-width':2},d.g);
+    d.t=el('text',{fill:d.col,'font-size':19,'font-family':'STIX Two Text, serif','text-anchor':'middle','dominant-baseline':'central'},d.g);
+    d.t.textContent=d.lab;
+    d.tr=el('polyline',{fill:'none',stroke:d.col,'stroke-width':1.6,'stroke-dasharray':'3 4',opacity:.75},trails);
+    d.cur=d.v.slice();});
+  function place(d){var p=proj(d.cur),dx=p[0]-C[0],dy=p[1]-C[1],L=Math.hypot(dx,dy)||1,ox=dx/L,oy=dy/L,a=-0.7;
+    var rx=ox*Math.cos(a)-oy*Math.sin(a),ry=ox*Math.sin(a)+oy*Math.cos(a);
+    d.c.setAttribute('cx',p[0]);d.c.setAttribute('cy',p[1]);
+    d.t.setAttribute('x',p[0]+rx*28);d.t.setAttribute('y',p[1]+ry*28);
+    d.g.setAttribute('opacity',d.cur[1]>0.2?0.5:1);}
+  defs.forEach(place);
+  function k(t){return '<bdi dir="ltr" class="m">'+t+'</bdi>';}
+  var D=Math.PI/180;
+  var G={
+    S:{u:[0,0,1],ang:90*D,text:'<b>S: רבע סיבוב סביב ציר z.</b> הקטבים לא זזים, וכל נקודה על קו המשווה מתקדמת צעד אחד: '+k('|+⟩ → |+i⟩ → |−⟩ → |−i⟩ → |+⟩')+'. אחרי ארבע לחיצות הכול חוזר למקום.'},
+    R22:{u:[0,1,0],ang:45*D,text:'<b>'+k('R(22.5°)')+':</b> במרחב הילברט הווקטור הסתובב ב-'+k('22.5°')+'. על הכדור זה סיבוב של '+k('45°')+' סביב ציר y.'},
+    R45:{u:[0,1,0],ang:90*D,text:'<b>'+k('R(45°)')+':</b> במרחב הילברט '+k('45°')+', על הכדור '+k('90°')+'. מנקודת ההתחלה, '+k('|0⟩')+' מגיע ל-'+k('|+⟩')+': מהקוטב לקו המשווה.'},
+    R90:{u:[0,1,0],ang:180*D,text:'<b>'+k('R(90°)')+':</b> במרחב הילברט '+k('90°')+', כלומר מצב ניצב. על הכדור '+k('180°')+': מנקודת ההתחלה, '+k('|0⟩')+' מגיע ל-'+k('|1⟩')+', הקוטב הנגדי. זה בעצם Y: '+k('R(90°) = −i·Y')+', וה-'+k('−i')+' הוא פאזה גלובלית.'},
+    R180:{u:[0,1,0],ang:360*D,text:'<b>'+k('R(180°)')+':</b> במרחב הילברט '+k('180°')+', והווקטור הפך ל-'+k('−|0⟩')+'. על הכדור זה סיבוב מלא של '+k('360°')+': כל נקודה חוזרת למקומה, כי המינוס הוא רק פאזה גלובלית.'}
+  };
+  var panel=document.getElementById('panel2'),anim=null,busy=false;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function clearHi(){while(hi.firstChild)hi.removeChild(hi.firstChild);}
+  function drawAxis(u){var f=1.3,a=proj(u.map(function(x){return x*f;})),b=proj(u.map(function(x){return -x*f;}));
+    el('line',{x1:b[0],y1:b[1],x2:a[0],y2:a[1],stroke:'var(--accent)','stroke-width':3.5,'stroke-linecap':'round',opacity:.85},hi);}
+  var btns=document.querySelectorAll('#gates2 button');
+  function press(key){btns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.g===key?'true':'false');});}
+  function run(key){
+    if(anim)cancelAnimationFrame(anim);
+    clearHi();
+    if(key==='RESET'){press('');defs.forEach(function(d){d.cur=d.v.slice();d.tr.setAttribute('points','');place(d);});
+      panel.innerHTML='לחץ על S כמה פעמים ברצף, או נסה את R בזוויות שונות.';return;}
+    var g=G[key];press(key);drawAxis(g.u);panel.innerHTML=g.text;
+    var start=defs.map(function(d){return d.cur.slice();});
+    defs.forEach(function(d){d.path=[];});
+    var t0=null,dur=Math.max(900,1500*g.ang/Math.PI);
+    function step(ts){if(t0===null)t0=ts;
+      var q=reduce?1:Math.min(1,(ts-t0)/dur),e=q<.5?2*q*q:1-Math.pow(-2*q+2,2)/2;
+      defs.forEach(function(d,i){d.cur=rot(start[i],g.u,g.ang*e);var p=proj(d.cur);
+        d.path.push(p[0].toFixed(1)+','+p[1].toFixed(1));d.tr.setAttribute('points',d.path.join(' '));place(d);});
+      if(q<1)anim=requestAnimationFrame(step);}
+    anim=requestAnimationFrame(step);
+  }
+  btns.forEach(function(b){b.addEventListener('click',function(){run(b.dataset.g);});});
+})();
+</script>
+</body>
+</html>

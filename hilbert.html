@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מרחב הילברט וספירת בלוך</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Secular+One&family=STIX+Two+Text:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFBFE; --ink:#1B1E4B; --muted:#5A5F86; --accent:#4F5BD5; --accent-soft:#ECEEFE;
+  --rule:#DADDF0; --card:#FFFFFF;
+  --c0:#C2543A; --c1:#0E7C6E; --th:#4F5BD5; --ph:#8A3FB8; --al:#A0620C; --pt:#3A3F8F;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#12142E; --ink:#E8E9F7; --muted:#A3A7CF; --accent:#8E97FF; --accent-soft:#1E2250;
+    --rule:#2A2E5A; --card:#181B3C;
+    --c0:#F08E74; --c1:#5FD0BE; --th:#8E97FF; --ph:#D19BF2; --al:#F2B05A; --pt:#C9CCFF; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#12142E; --ink:#E8E9F7; --muted:#A3A7CF; --accent:#8E97FF; --accent-soft:#1E2250;
+  --rule:#2A2E5A; --card:#181B3C;
+  --c0:#F08E74; --c1:#5FD0BE; --th:#8E97FF; --ph:#D19BF2; --al:#F2B05A; --pt:#C9CCFF; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Frank Ruhl Libre","David Libre",Georgia,serif;font-size:1.08rem;line-height:1.75}
+main{max-width:46rem;margin:0 auto;padding:1.5rem 1.15rem 4rem}
+h3{font-family:"Secular One",sans-serif;font-weight:400;font-size:1.2rem;color:var(--accent);margin:1.8rem 0 .3rem}
+h1,h2{font-family:"Secular One","Frank Ruhl Libre",sans-serif;font-weight:400;line-height:1.25}
+h1{font-size:2rem;margin:.4rem 0 .3rem}
+h2{font-size:1.5rem;margin:2.6rem 0 .6rem;padding-bottom:.35rem;border-bottom:2px solid var(--accent)}
+p{margin:.55rem 0}
+.sub{color:var(--muted);margin:0 0 1.2rem}
+.m{font-family:"STIX Two Text","Cambria Math",serif;white-space:nowrap;unicode-bidi:isolate}
+.en{font-family:"STIX Two Text",Georgia,serif;font-size:.88em;color:var(--muted);unicode-bidi:isolate}
+.formula{direction:ltr;text-align:center;font-family:"STIX Two Text",serif;font-size:clamp(1.15rem,4.6vw,1.6rem);
+  margin:1rem 0 .4rem;padding:.8rem .4rem;background:var(--card);border:1px solid var(--rule);border-radius:12px;overflow-x:auto;white-space:nowrap}
+.formula .a{color:var(--al)} .formula .p{color:var(--ph)} .formula .t{color:var(--th)}
+.formula sup{font-size:.62em}
+.key{display:grid;grid-template-columns:auto 1fr;gap:.25rem .8rem;margin:.6rem 0 1rem;font-size:1rem}
+.key .sym{direction:ltr;font-family:"STIX Two Text",serif;font-size:1.1rem;text-align:center}
+.stage{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:1rem .9rem 1.1rem;margin:1.2rem 0}
+.views{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.6rem;align-items:center;direction:ltr}
+.views svg{width:100%;height:auto;display:block}
+.cap{direction:rtl;text-align:center;color:var(--muted);font-size:.95rem;margin-top:-.2rem}
+.ctrl{display:grid;grid-template-columns:auto 1fr 3.4rem;gap:.55rem .8rem;align-items:center;margin:1rem 0 .4rem;font-size:1rem}
+.ctrl label{white-space:nowrap}
+.ctrl output{direction:ltr;font-family:"STIX Two Text",serif;text-align:left}
+.ctrl input[type=range]{width:100%}
+#lt{color:var(--th)} #lp{color:var(--ph)} #la{color:var(--al)}
+.live{direction:ltr;text-align:center;font-family:"STIX Two Text",serif;font-size:clamp(1rem,4vw,1.25rem);margin:.6rem 0;overflow-x:auto;white-space:nowrap}
+.live .a{color:var(--al)} .live .p{color:var(--ph)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.6rem 0}
+.cards div{background:var(--accent-soft);border-radius:8px;padding:.4rem .8rem}
+.cards small{display:block;color:var(--muted);font-size:.9rem}
+.cards b{font-family:"STIX Two Text",serif;font-size:1.4rem;font-weight:500}
+.presets{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.7rem;align-items:center}
+.presets span{color:var(--muted);font-size:.95rem}
+.presets button{font-family:"STIX Two Text",serif;font-size:1rem;padding:.25rem .7rem;border-radius:8px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;direction:ltr}
+.presets button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bdesc{text-align:center;min-height:1.9em;margin:.5rem 0 .2rem;font-size:1.05rem}
+.note{background:var(--accent-soft);border-radius:8px;padding:.75rem .95rem;margin:1rem 0}
+.wrap{overflow-x:auto;margin:.8rem 0}
+table{border-collapse:collapse;width:100%;font-size:1rem}
+th{font-family:"Secular One",sans-serif;font-weight:400;color:var(--muted);text-align:right;padding:.45rem;border-bottom:2px solid var(--accent)}
+td{padding:.45rem;border-bottom:1px solid var(--rule)}
+ol{padding-inline-start:1.4rem} li{margin:.35rem 0}
+footer{margin-top:3rem;color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:1rem}
+</style>
+</head>
+<body>
+<main id="doc">
+<p style="margin:0 0 .4rem;font-size:.95rem"><a href="index.html" style="color:var(--accent)">← כל העמודים</a></p>
+
+<h1>מרחב הילברט וספירת בלוך</h1>
+<p class="sub">איך שני מספרים מרוכבים הופכים לנקודה על כדור</p>
+
+<h2>מה זה מרחב הילברט</h2>
+<p>מרחב הילברט <span class="en">(Hilbert space)</span> של קיוביט הוא מרחב <b>רשימות האמפליטודות</b>: מספר מרוכב אחד ל-$|0⟩$ ומספר מרוכב אחד ל-$|1⟩$. זה המצב כפי שהמתמטיקה רואה אותו, והמטריצות (השערים) פועלות על הרשימה הזו.</p>
+<p>כל מספר מרוכב הוא שני מספרים ממשיים, אז הרשימה כולה היא <b>ארבעה</b> מספרים ממשיים. מרחב בן ארבעה ממדים אי אפשר לצייר בשלמותו. אבל יש דרך טובה להסתכל עליו.</p>
+
+<h2>שני שעונים</h2>
+<p>מספר מרוכב הוא חץ במישור: יש לו <b>אורך</b> ויש לו <b>כיוון</b>. הכיוון נקרא <b>פאזה</b>. לכן אפשר לצייר מצב של קיוביט כ<b>שני שעונים</b>: שעון אחד לאמפליטודה של $|0⟩$, ושעון שני לאמפליטודה של $|1⟩$. שני השעונים יחד הם נקודה אחת במרחב הילברט.</p>
+<p>כל מצב של קיוביט אפשר לכתוב כך:</p>
+
+<div class="formula">|ψ⟩ = <span class="a">e<sup>iα</sup></span> ( cos(<span class="t">θ</span>/2) |0⟩ + <span class="p">e<sup>iφ</sup></span> sin(<span class="t">θ</span>/2) |1⟩ )</div>
+<div class="key">
+  <span class="sym" style="color:var(--th)">θ</span><span><b>החלוקה</b> בין 0 ל-1: קובעת את אורכי שני החצים, ולכן את ההסתברויות. על הכדור: <b>קו הרוחב</b> (הגובה).</span>
+  <span class="sym" style="color:var(--ph)">e<sup>iφ</sup></span><span><b>הפאזה היחסית</b>: ההפרש בין כיווני שני החצים. על הכדור: <b>קו האורך</b> (הסיבוב סביב ציר z).</span>
+  <span class="sym" style="color:var(--al)">e<sup>iα</sup></span><span><b>הפאזה הגלובלית</b>: מסובבת את שני החצים יחד. על הכדור: <b>שום דבר</b>. אין לה מקום על הכדור.</span>
+</div>
+<p class="sub">הקוסינוס והסינוס דואגים שסכום ריבועי האורכים יהיה תמיד 1, כלומר שההסתברויות מסתכמות ל-100%.</p>
+
+<section class="stage" aria-label="שני השעונים וספירת בלוך">
+  <div class="views">
+    <div>
+      <svg id="clocks" viewBox="0 0 360 200" role="img" aria-label="שני שעונים: האמפליטודה של 0 והאמפליטודה של 1"></svg>
+      <div class="cap">מרחב הילברט: שני השעונים</div>
+    </div>
+    <div>
+      <svg id="sphere" viewBox="0 0 360 320" role="img" aria-label="ספירת בלוך עם הנקודה של המצב"></svg>
+      <div class="cap">ספירת בלוך</div>
+    </div>
+  </div>
+  <div class="ctrl">
+    <label for="th">חלוקה <span style="color:var(--th)">θ</span></label><input type="range" id="th" min="0" max="180" step="1" value="60"><output id="lt"></output>
+    <label for="ph">פאזה יחסית <span style="color:var(--ph)">φ</span></label><input type="range" id="ph" min="0" max="360" step="1" value="45"><output id="lp"></output>
+    <label for="al">פאזה גלובלית <span style="color:var(--al)">α</span></label><input type="range" id="al" min="0" max="360" step="1" value="0"><output id="la"></output>
+  </div>
+  <div class="live" id="live"></div>
+  <div class="cards">
+    <div><small>הסתברות למדוד $|0⟩$</small><b id="p0"></b></div>
+    <div><small>הסתברות למדוד $|1⟩$</small><b id="p1"></b></div>
+    <div><small>הסתברות למדוד $|+⟩$</small><b id="pp"></b></div>
+    <div><small>הסתברות למדוד $|−⟩$</small><b id="pm"></b></div>
+    <div><small>הסתברות למדוד $|+i⟩$</small><b id="ppi"></b></div>
+    <div><small>הסתברות למדוד $|−i⟩$</small><b id="pmi"></b></div>
+  </div>
+  <div class="presets"><span>מצבים מוכנים:</span>
+    <button type="button" data-p="0,0,0">|0⟩</button>
+    <button type="button" data-p="90,0,0">|+⟩</button>
+    <button type="button" data-p="90,180,0">|−⟩</button>
+    <button type="button" data-p="90,90,0">|+i⟩</button>
+    <button type="button" data-p="180,0,0">R(90°)|0⟩ = |1⟩</button>
+    <button type="button" data-p="180,0,90">Y|0⟩ = i|1⟩</button>
+  </div>
+</section>
+
+<h2>מה כדאי לנסות</h2>
+<ol>
+<li><b>הזז רק את הפאזה הגלובלית.</b> שני השעונים מסתובבים יחד, אבל הנקודה על הכדור וההסתברויות לא זזות. זה המידע שמרחב הילברט מחזיק והכדור זורק.</li>
+<li><b>הזז רק את הפאזה היחסית.</b> אורכי החצים לא משתנים, ולכן גם ההסתברויות. אבל הנקודה מסתובבת סביב ציר z, וזה בדיוק מה ששער S עושה.</li>
+<li><b>אפס את שתי הפאזות והזז את החלוקה.</b> שני החצים נשארים אופקיים, כלומר האמפליטודות ממשיות, והנקודה נעה רק על מעגל x-z. ב-θ = 90° (חצי הדרך על הכדור) ההסתברויות הן 50/50, כלומר $|+⟩$.</li>
+</ol>
+
+<h2>מה הכדור זורק</h2>
+<p>ברשימת האמפליטודות יש ארבעה מספרים ממשיים. הכדור זורק שניים מהם:</p>
+<ol>
+<li><b>האורך הכולל.</b> סכום ריבועי האורכים הוא תמיד 1, אז זה לא באמת מידע.</li>
+<li><b>הפאזה הגלובלית.</b> שום ניסוי לא מבחין בה, כי כל הסתברות תלויה רק באורכים ובהפרש הפאזות.</li>
+</ol>
+<p>נשארים שני מספרים: קו רוחב וקו אורך. כלומר נקודה על פני כדור.</p>
+
+<h2>פאזה גלובלית: למה <span class="m">R(90°)</span> ו-<span class="m">Y</span> נראים זהים</h2>
+<p>על הכדור, $R(90°)$ ו-$Y$ עושים בדיוק את אותו סיבוב. זה לא במקרה, וזו בדיוק המשמעות של "עד כדי פאזה גלובלית": <b>הכדור לא מסוגל להראות פאזה גלובלית</b>, כי הוא בנוי מהמידע שאפשר למדוד בלבד. אם שני דברים נראים זהים על הכדור, אז שום ניסוי לא יבדיל ביניהם.</p>
+<p>ההבדל קיים רק במרחב הילברט, כלומר בשעונים. לחץ על שני הכפתורים האחרונים במצבים המוכנים:</p>
+<ul>
+<li>$R(90°)|0⟩ = |1⟩$: השעון של 0 ריק, והחץ בשעון של 1 מצביע <b>ימינה</b> (אמפליטודה 1).</li>
+<li>$Y|0⟩ = i|1⟩$: השעון של 0 ריק, והחץ בשעון של 1 מצביע <b>למעלה</b> (אמפליטודה $i$, כלומר 90°).</li>
+</ul>
+<p>יש רק חץ אחד, אז אין "הפרש פאזות" בין שני חצים. סיבוב של החץ היחיד הוא סיבוב של כל הרשימה, כלומר פאזה גלובלית. הנקודה על הכדור זהה: הקוטב הדרומי.</p>
+<p>ולגבי השערים עצמם: $R(90°) = −i·Y$, כאשר אותו $−i$ מכפיל את התוצאה <b>לכל</b> מצב שנכנס. לכן אין שום מצב, ושום שילוב של מצבים, שבו שני השערים יתנו תוצאה שונה במדידה. פיזיקלית הם אותו שער.</p>
+
+<div class="note"><b>וזה גם מה שהמספרים בטבלאות אומרים.</b> כשכתוב $X|+i⟩ = i·|−i⟩$, ה-$i$ שלפני המצב מסובב את שני השעונים יחד ב-90°. המצב שהתקבל הוא $|−i⟩$, והנקודה על הכדור נמצאת בדיוק ב-$|−i⟩$. ובמצבים שעל ציר הסיבוב, כמו $X|−⟩ = −|−⟩$, המספר שלפני המצב הוא הערך העצמי: המצב "חוזר לעצמו", רק עם השעונים מסובבים.</div>
+
+<h2>דוגמה: הפרוסה הממשית ומעגל x-z</h2>
+<p>לדוגמה, נסתכל על המקרה שבו נגביל את עצמנו לאמפליטודות <b>ממשיות</b>. במקרה הזה אפשר לצייר את מרחב הילברט כמישור רגיל: הציר האופקי הוא האמפליטודה של $|0⟩$, והציר האנכי הוא האמפליטודה של $|1⟩$. מצב הוא חץ באורך 1 במישור הזה, ומטריצת הסיבוב $R(θ)$ מסובבת אותו.</p>
+<p><b>במונחי הנוסחה:</b> אמפליטודה ממשית היא חץ שמונח על הקו האופקי של השעון, ימינה (פאזה 0°) או שמאלה (פאזה 180°). אחרי שמתעלמים מהפאזה הגלובלית, זה אומר:</p>
+<ul>
+<li><b>החלוקה θ חופשית</b>, מ-0° עד 180°.</li>
+<li><b>הפאזה היחסית φ היא 0° או 180° בלבד</b>: שני החצים באותו כיוון, או בכיוונים מנוגדים.</li>
+</ul>
+<p>על הכדור, ב-$φ = 0°$ הנקודה נמצאת על חצי המעגל של $|+⟩$ (צד x החיובי), וב-$φ = 180°$ על חצי המעגל של $|−⟩$. יחד הם המעגל השלם במישור x-z. לכן בדוגמה הזו, מישור האמפליטודות הממשיות מתאים למעגל x-z על הכדור. כל ערך אחר של φ מוציא את הנקודה מהמישור לכיוון ציר y, ואז ההסתברויות למדוד $|+i⟩$ ו-$|−i⟩$ כבר לא שוות.</p>
+
+<h3>הזווית הכפולה</h3>
+<p>בדוגמה הזו יש שתי זוויות, ושווה להגדיר אותן בדיוק. שתיהן נמדדות מהמצב $|0⟩$:</p>
+<ul>
+<li><b>הזווית במרחב הילברט:</b> הזווית בין החץ במישור האמפליטודות לבין הציר של $|0⟩$. בנוסחה למעלה זו $θ/2$.</li>
+<li><b>הזווית על ספירת בלוך:</b> הזווית בין החץ על הכדור לבין הקוטב הצפוני, שבו נמצא $|0⟩$. בנוסחה זו $θ$ עצמה.</li>
+</ul>
+<p>הזווית על הכדור תמיד כפולה מהזווית במרחב הילברט. הזז את הסליידר כדי לראות את שתיהן יחד:</p>
+
+<section class="stage" aria-label="הזווית במרחב הילברט מול הזווית על הכדור">
+  <div class="views">
+    <div><svg id="hp" viewBox="0 0 300 270" role="img" aria-label="מישור האמפליטודות הממשיות"></svg><div class="cap">מרחב הילברט: מישור האמפליטודות</div></div>
+    <div><svg id="xz" viewBox="0 0 300 270" role="img" aria-label="ספירת בלוך: הנקודה נעה על מעגל x-z"></svg><div class="cap">ספירת בלוך</div></div>
+  </div>
+  <div class="ctrl" style="grid-template-columns:auto 1fr 3.8rem">
+    <label for="beta">זווית במרחב הילברט</label><input type="range" id="beta" min="0" max="180" step="0.5" value="30"><output id="bv"></output>
+  </div>
+  <div class="cards" style="grid-template-columns:1fr 1fr 1fr">
+    <div><small>במרחב הילברט, $θ/2$</small><b id="r1"></b></div>
+    <div><small>על הכדור, $θ$</small><b id="r2"></b></div>
+    <div><small>הסתברות למדוד $|0⟩$</small><b id="r3"></b></div>
+  </div>
+  <div class="bdesc" id="bdesc" aria-live="polite"></div>
+  <div class="presets"><span>מקרים פרטיים:</span>
+    <button type="button" data-b="0">θ/2 = 0°</button>
+    <button type="button" data-b="22.5">θ/2 = 22.5°</button>
+    <button type="button" data-b="45">θ/2 = 45°</button>
+    <button type="button" data-b="90">θ/2 = 90°</button>
+    <button type="button" data-b="180">θ/2 = 180°</button>
+  </div>
+</section>
+
+<p><b>למה כפול: אנלוגיית המקל.</b> $|0⟩$ ו-$−|0⟩$ הם אותו מצב (המקרה של $θ/2 = 180°$ בהדגמה), כך שבמישור האמפליטודות מצב הוא לא חץ אלא <b>מקל</b> בלי ראש. בציור של מישור האמפליטודות זה הקו המקווקו: שני הקצוות שלו הם אותו מצב. סובב מקל ב-180° והוא נראה בדיוק אותו דבר, כך שכל הכיוונים השונים של מקל נגמרים כבר אחרי 180°. כדי לצייר אותם על מעגל בלי לחזור על אף אחד, מכפילים את הזווית: 180° של מקל הופכים ל-360° על הכדור.</p>
+<p><b>וגם ההסתברויות מחייבות את זה.</b> את ההסתברות למדוד $|0⟩$ אפשר לחשב בשתי דרכים. במרחב הילברט: ריבוע הקוסינוס של $θ/2$. על הכדור: אחד ועוד הקוסינוס של $θ$, חלקי שתיים. שתי הדרכים נותנות אותו מספר בדיוק כשהזווית על הכדור כפולה.</p>
+<p>זו גם הסיבה שבנוסחה למעלה כתוב $θ/2$: הזווית על הכדור היא θ, והזווית "בתוך" האמפליטודות היא חצי ממנה.</p>
+
+<footer>גרסה 4.</footer>
+</main>
+
+<script>
+(function(){
+  var doc=document.getElementById('doc');
+  doc.innerHTML=doc.innerHTML.replace(/\$([^$]+)\$/g,'<bdi dir="ltr" class="m">$1</bdi>');
+
+  var NS='http://www.w3.org/2000/svg';
+  function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  var F='STIX Two Text, serif';
+
+  var cs=document.getElementById('clocks');
+  function clock(cx,cy,r,lab,col){
+    var t=el('text',{x:cx,y:22,'text-anchor':'middle',fill:col,'font-family':F,'font-size':20},cs);t.textContent=lab;
+    el('circle',{cx:cx,cy:cy,r:r,fill:'none',stroke:'var(--rule)','stroke-width':1.5},cs);
+    el('line',{x1:cx-r,y1:cy,x2:cx+r,y2:cy,stroke:'var(--rule)','stroke-width':1},cs);
+    el('line',{x1:cx,y1:cy-r,x2:cx,y2:cy+r,stroke:'var(--rule)','stroke-width':1},cs);
+    var ln=el('line',{x1:cx,y1:cy,x2:cx,y2:cy,stroke:col,'stroke-width':4,'stroke-linecap':'round'},cs);
+    var hd=el('circle',{r:6,fill:col},cs);
+    return {ln:ln,hd:hd,cx:cx,cy:cy,r:r};
+  }
+  var A=clock(90,112,72,'|0⟩','var(--c0)'), B=clock(270,112,72,'|1⟩','var(--c1)');
+
+  var sv=document.getElementById('sphere'), C=[175,165], R=118, EX=[R,0], EY=[0.43*R,-0.26*R], EZ=[0,-R];
+  function pr(v){return [C[0]+v[0]*EX[0]+v[1]*EY[0]+v[2]*EZ[0], C[1]+v[0]*EX[1]+v[1]*EY[1]+v[2]*EZ[1]];}
+  el('circle',{cx:C[0],cy:C[1],r:R,fill:'none',stroke:'var(--muted)','stroke-width':1.2},sv);
+  var d='';for(var i=0;i<=96;i++){var a=i/96*2*Math.PI,q=pr([Math.cos(a),Math.sin(a),0]);d+=(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1);}
+  el('path',{d:d,fill:'none',stroke:'var(--muted)','stroke-width':.8,'stroke-dasharray':'4 4',opacity:.8},sv);
+  function axis(u,f,g,lab){var a=pr(u.map(function(x){return x*f;})),b=pr(u.map(function(x){return -x*g;}));
+    el('line',{x1:b[0],y1:b[1],x2:a[0],y2:a[1],stroke:'var(--muted)','stroke-width':.8,'stroke-dasharray':'2 4'},sv);
+    var t=el('text',{x:a[0]+8,y:a[1]+4,fill:'var(--muted)','font-family':F,'font-style':'italic','font-size':16},sv);t.textContent=lab;}
+  axis([0,0,1],1.15,1.08,'z'); axis([1,0,0],1.18,1.12,'x'); axis([0,1,0],1.85,1.45,'y');
+  var l0=el('text',{x:C[0]-34,y:C[1]-R-6,fill:'var(--c0)','font-family':F,'font-size':18},sv);l0.textContent='|0⟩';
+  var l1=el('text',{x:C[0]-34,y:C[1]+R+20,fill:'var(--c1)','font-family':F,'font-size':18},sv);l1.textContent='|1⟩';
+  [[[1,0,0],'|+⟩',-6,22],[[-1,0,0],'|−⟩',-30,22],[[0,1,0],'|+i⟩',8,-8],[[0,-1,0],'|−i⟩',-38,18]].forEach(function(b){
+    var q=pr(b[0]); el('circle',{cx:q[0],cy:q[1],r:4.5,fill:'var(--muted)'},sv);
+    var t=el('text',{x:q[0]+b[2],y:q[1]+b[3],fill:'var(--muted)','font-family':F,'font-size':16},sv);t.textContent=b[1];
+  });
+  var rad=el('line',{x1:C[0],y1:C[1],x2:C[0],y2:C[1],stroke:'var(--pt)','stroke-width':3,'stroke-linecap':'round'},sv);
+  var dot=el('circle',{r:8,fill:'var(--pt)'},sv);
+
+  var $=function(id){return document.getElementById(id);};
+  function f2(x){var v=Math.round(x*100)/100;return (v===0?0:v).toFixed(2);}
+  function upd(){
+    var thd=+$('th').value, phd=+$('ph').value, ald=+$('al').value;
+    var th=thd*Math.PI/180, ph=phd*Math.PI/180, al=ald*Math.PI/180;
+    var ma=Math.cos(th/2), mb=Math.sin(th/2);
+    function set(K,m,ang){var x=K.cx+K.r*m*Math.cos(ang), y=K.cy-K.r*m*Math.sin(ang);
+      K.ln.setAttribute('x2',x);K.ln.setAttribute('y2',y);K.hd.setAttribute('cx',x);K.hd.setAttribute('cy',y);K.hd.setAttribute('opacity',m<0.02?0:1);}
+    set(A,ma,al); set(B,mb,al+ph);
+    var p=pr([Math.sin(th)*Math.cos(ph),Math.sin(th)*Math.sin(ph),Math.cos(th)]);
+    rad.setAttribute('x2',p[0]);rad.setAttribute('y2',p[1]);dot.setAttribute('cx',p[0]);dot.setAttribute('cy',p[1]);
+    $('lt').textContent=thd+'°'; $('lp').textContent=phd+'°'; $('la').textContent=ald+'°';
+    $('live').innerHTML='|ψ⟩ = <span class="a">e<sup>i·'+ald+'°</sup></span> ( '+f2(ma)+' |0⟩ + <span class="p">e<sup>i·'+phd+'°</sup></span> '+f2(mb)+' |1⟩ )';
+    $('p0').textContent=Math.round(ma*ma*100)+'%'; $('p1').textContent=Math.round(mb*mb*100)+'%';
+    var sx=Math.sin(th)*Math.cos(ph), sy=Math.sin(th)*Math.sin(ph);
+    $('pp').textContent=Math.round((1+sx)*50)+'%'; $('pm').textContent=Math.round((1-sx)*50)+'%';
+    $('ppi').textContent=Math.round((1+sy)*50)+'%'; $('pmi').textContent=Math.round((1-sy)*50)+'%';
+  }
+  ['th','ph','al'].forEach(function(id){$(id).addEventListener('input',upd);});
+  document.querySelectorAll('.presets button[data-p]').forEach(function(b){b.addEventListener('click',function(){
+    var v=b.dataset.p.split(','); $('th').value=v[0]; $('ph').value=v[1]; $('al').value=v[2]; upd();});});
+  upd();
+})();
+</script>
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg',F='STIX Two Text, serif';
+  function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function txt(p,x,y,s,col,size,anchor){var t=el('text',{x:x,y:y,fill:col,'font-family':F,'font-size':size||16,'text-anchor':anchor||'middle','dominant-baseline':'central'},p);t.textContent=s;return t;}
+  function k(t){return '<bdi dir="ltr" class="m">'+t+'</bdi>';}
+  var hp=document.getElementById('hp'),xz=document.getElementById('xz'),r=95;
+  var H={cx:150,cy:140};
+  el('circle',{cx:H.cx,cy:H.cy,r:r,fill:'none',stroke:'var(--muted)','stroke-width':1.2},hp);
+  el('line',{x1:H.cx-r-14,y1:H.cy,x2:H.cx+r+14,y2:H.cy,stroke:'var(--muted)','stroke-width':.8},hp);
+  el('line',{x1:H.cx,y1:H.cy+r+14,x2:H.cx,y2:H.cy-r-14,stroke:'var(--muted)','stroke-width':.8},hp);
+  txt(hp,H.cx+r+24,H.cy,'|0⟩','var(--c0)',17); txt(hp,H.cx,H.cy-r-26,'|1⟩','var(--c1)',17);
+  var hStick=el('line',{stroke:'var(--pt)','stroke-width':1.5,'stroke-dasharray':'4 4',opacity:.6},hp);
+  var hArc=el('path',{fill:'none',stroke:'var(--th)','stroke-width':2},hp);
+  var hLab=txt(hp,0,0,'θ/2','var(--th)',16);
+  var hArr=el('line',{x1:H.cx,y1:H.cy,stroke:'var(--pt)','stroke-width':3.5,'stroke-linecap':'round'},hp);
+  var hDot=el('circle',{r:7,fill:'var(--pt)'},hp);
+
+  var C=[140,140], R=r, EX=[R,0], EY=[0.43*R,-0.26*R], EZ=[0,-R];
+  function pr(v){return [C[0]+v[0]*EX[0]+v[1]*EY[0]+v[2]*EZ[0], C[1]+v[0]*EX[1]+v[1]*EY[1]+v[2]*EZ[1]];}
+  el('circle',{cx:C[0],cy:C[1],r:R,fill:'none',stroke:'var(--muted)','stroke-width':1.2},xz);
+  var d='';for(var i=0;i<=96;i++){var a=i/96*2*Math.PI,q=pr([Math.cos(a),Math.sin(a),0]);d+=(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1);}
+  el('path',{d:d,fill:'none',stroke:'var(--muted)','stroke-width':.8,'stroke-dasharray':'4 4',opacity:.8},xz);
+  function axis(u,f,g){var a=pr(u.map(function(x){return x*f;})),b=pr(u.map(function(x){return -x*g;}));
+    el('line',{x1:b[0],y1:b[1],x2:a[0],y2:a[1],stroke:'var(--muted)','stroke-width':.8,'stroke-dasharray':'2 4'},xz);return a;}
+  var az=axis([0,0,1],1.14,1.1), ax=axis([1,0,0],1.16,1.12), ay=axis([0,1,0],1.75,1.4);
+  txt(xz,az[0]-12,az[1]+2,'z','var(--muted)',15); txt(xz,ax[0]+2,ax[1]-12,'x','var(--muted)',15); txt(xz,ay[0]+8,ay[1]-4,'y','var(--muted)',15);
+  [[[1,0,0],'|+⟩',14,18],[[-1,0,0],'|−⟩',-14,18],[[0,1,0],'|+i⟩',18,-10],[[0,-1,0],'|−i⟩',-20,14]].forEach(function(b){
+    var q=pr(b[0]); el('circle',{cx:q[0],cy:q[1],r:4,fill:'var(--muted)'},xz); txt(xz,q[0]+b[2],q[1]+b[3],b[1],'var(--muted)',15);});
+  var n=pr([0,0,1]), s=pr([0,0,-1]);
+  txt(xz,n[0]+24,n[1]-12,'|0⟩','var(--c0)',17); txt(xz,s[0]+24,s[1]+12,'|1⟩','var(--c1)',17);
+  var xArc=el('path',{fill:'none',stroke:'var(--th)','stroke-width':2},xz);
+  var xLab=txt(xz,0,0,'θ','var(--th)',17);
+  var xArr=el('line',{x1:C[0],y1:C[1],stroke:'var(--pt)','stroke-width':3.5,'stroke-linecap':'round'},xz);
+  var xDot=el('circle',{r:7,fill:'var(--pt)'},xz);
+
+  var PRE={'0':k('|0⟩')+', הקוטב הצפוני','22.5':'בין '+k('|0⟩')+' ל-'+k('|+⟩'),'45':k('|+⟩')+', על קו המשווה','90':k('|1⟩')+', הקוטב הדרומי','180':k('−|0⟩')+', אותו מצב כמו '+k('|0⟩')+': חזרה לקוטב הצפוני'};
+  function region(b){
+    if(b<45)return 'בין '+k('|0⟩')+' ל-'+k('|+⟩');
+    if(b<90)return 'בין '+k('|+⟩')+' ל-'+k('|1⟩');
+    if(b===135)return k('|−⟩')+' (עד כדי פאזה גלובלית), על קו המשווה בצד השני';
+    if(b<135)return 'בין '+k('|1⟩')+' ל-'+k('|−⟩')+'. האמפליטודה של '+k('|0⟩')+' כבר שלילית';
+    return 'בין '+k('|−⟩')+' לבין החזרה ל-'+k('|0⟩');
+  }
+  function fmt(v){return (Math.round(v*10)/10).toString().replace(/\.0$/,'')+'°';}
+  function upd(){
+    var bd=+document.getElementById('beta').value, b=bd*Math.PI/180, t=2*b, ra=36;
+    var hx=H.cx+r*Math.cos(b), hy=H.cy-r*Math.sin(b);
+    hArr.setAttribute('x2',hx);hArr.setAttribute('y2',hy);hDot.setAttribute('cx',hx);hDot.setAttribute('cy',hy);
+    hStick.setAttribute('x1',H.cx-r*Math.cos(b));hStick.setAttribute('y1',H.cy+r*Math.sin(b));hStick.setAttribute('x2',hx);hStick.setAttribute('y2',hy);
+    hArc.setAttribute('d',bd>0.4?'M'+(H.cx+ra)+' '+H.cy+' A'+ra+' '+ra+' 0 0 0 '+(H.cx+ra*Math.cos(b)).toFixed(1)+' '+(H.cy-ra*Math.sin(b)).toFixed(1):'');
+    hLab.setAttribute('x',H.cx+(ra+18)*Math.cos(b/2));hLab.setAttribute('y',H.cy-(ra+18)*Math.sin(b/2));hLab.setAttribute('opacity',bd>6?1:0);
+    var xx=C[0]+R*Math.sin(t), xy=C[1]-R*Math.cos(t);
+    xArr.setAttribute('x2',xx);xArr.setAttribute('y2',xy);xDot.setAttribute('cx',xx);xDot.setAttribute('cy',xy);
+    var tt=Math.min(t,2*Math.PI-0.001);
+    xArc.setAttribute('d',bd>0.4?'M'+C[0]+' '+(C[1]-ra)+' A'+ra+' '+ra+' 0 '+(tt>Math.PI?1:0)+' 1 '+(C[0]+ra*Math.sin(tt)).toFixed(1)+' '+(C[1]-ra*Math.cos(tt)).toFixed(1):'');
+    xLab.setAttribute('x',C[0]+(ra+16)*Math.sin(tt/2));xLab.setAttribute('y',C[1]-(ra+16)*Math.cos(tt/2));xLab.setAttribute('opacity',bd>4?1:0);
+    document.getElementById('bv').textContent=fmt(bd);
+    document.getElementById('r1').textContent=fmt(bd);
+    document.getElementById('r2').textContent=fmt(2*bd);
+    document.getElementById('r3').textContent=Math.round(Math.cos(b)*Math.cos(b)*100)+'%';
+    var key=String(bd); document.getElementById('bdesc').innerHTML='<b>המצב:</b> '+(PRE[key]||region(bd));
+  }
+  document.getElementById('beta').addEventListener('input',upd);
+  document.querySelectorAll('.presets button[data-b]').forEach(function(btn){btn.addEventListener('click',function(){document.getElementById('beta').value=btn.dataset.b;upd();});});
+  upd();
+})();
+</script>
+</body>
+</html>

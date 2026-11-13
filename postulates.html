@@ -66,6 +66,9 @@ table.q a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .eqc p{margin:.2rem 0 0}
 .eqc p.sym{color:var(--muted);font-size:.96rem;margin-bottom:.4rem}
 footer{margin-top:3rem;color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:1rem}
+a.x{color:var(--accent);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+a.x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+footer a{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -100,7 +103,7 @@ footer{margin-top:3rem;color:var(--muted);font-size:.9rem;border-top:1px solid v
 <!-- 1 -->
 <section class="post" id="p1">
 <h2><span class="num">1</span>המצב</h2>
-<p><b>במילים:</b> כל מה שאפשר לדעת על המערכת נמצא באובייקט אחד, $|ψ⟩$, שהוא וקטור במרחב הילברט מרוכב <span class="en">(complex Hilbert space)</span>. כדי לכתוב אותו בפועל בוחרים בסיס ${|i⟩}$, שצריך לעמוד בשתי דרישות:</p>
+<p><b>במילים:</b> כל מה שאפשר לדעת על המערכת נמצא באובייקט אחד, $|ψ⟩$, שהוא וקטור <a class="x" href="hilbert.html">במרחב הילברט</a> מרוכב <span class="en">(complex Hilbert space)</span>. כדי לכתוב אותו בפועל בוחרים בסיס ${|i⟩}$, שצריך לעמוד בשתי דרישות:</p>
 <div class="eqs">
   <div class="eqc">
     <div class="nm">אורתונורמליות <span class="en">(orthonormality)</span></div>
@@ -186,13 +189,13 @@ footer{margin-top:3rem;color:var(--muted);font-size:.9rem;border-top:1px solid v
     <div class="nm">התפתחות אוניטרית <span class="en">(unitary evolution)</span></div>
     <div class="f">|ψ(t)⟩ = U|ψ(0)⟩,&nbsp;&nbsp; U<sup>†</sup>U = 1</div>
     <p class="sym"><b>סימונים:</b> $U$ הוא אופרטור ההתפתחות בזמן. $U<sup>†</sup>$ הוא הצמוד ההרמיטי שלו (שחלוף והצמדה), וה-1 הוא שוב אופרטור הזהות. כלומר $U<sup>†</sup>$ מבטל את $U$.</p>
-    <p><b>החלק הראשון:</b> המצב בזמן $t$ מתקבל מהמצב ההתחלתי על ידי הפעלת אופרטור אחד, $U$.<br><b>החלק השני:</b> $U$ אוניטרי, ולכן הוא משמר את אורך הווקטור. כך ההסתברויות ממשיכות להסתכם ל-100% לאורך כל הזמן. הדוגמה הפשוטה ביותר היא מטריצת הסיבוב $R(θ)$.</p>
+    <p><b>החלק הראשון:</b> המצב בזמן $t$ מתקבל מהמצב ההתחלתי על ידי הפעלת אופרטור אחד, $U$.<br><b>החלק השני:</b> $U$ אוניטרי, ולכן הוא משמר את אורך הווקטור. כך ההסתברויות ממשיכות להסתכם ל-100% לאורך כל הזמן. הדוגמה הפשוטה ביותר היא <a class="x" href="pauli-bloch.html#s-demo">מטריצת הסיבוב</a> $R(θ)$.</p>
   </div>
   <div class="eqc">
     <div class="nm">משוואת שרדינגר <span class="en">(Schrödinger equation)</span></div>
     <div class="f">iħ d|ψ⟩/dt = H|ψ⟩</div>
     <p class="sym"><b>סימונים:</b> $i$ כאן הוא היחידה המדומה, $ħ$ הוא קבוע פלאנק המצומצם, ו-$d|ψ⟩/dt$ הוא קצב השינוי של המצב בזמן. $H$ כאן הוא ההמילטוניאן, לא שער הדמרד.</p>
-    <p>הנוסחה הזו אומרת <b>איזה</b> $U$: קצב השינוי של המצב נקבע על ידי ההמילטוניאן $H$, אופרטור האנרגיה. על ספירת בלוך, $H$ קובע סביב איזה ציר החץ מסתובב ובאיזו מהירות.</p>
+    <p>הנוסחה הזו אומרת <b>איזה</b> $U$: קצב השינוי של המצב נקבע על ידי ההמילטוניאן $H$, אופרטור האנרגיה. על <a class="x" href="pauli-bloch.html">ספירת בלוך</a>, $H$ קובע סביב איזה ציר החץ מסתובב ובאיזו מהירות.</p>
   </div>
 </div>
 <div class="exp"><b>הניסויים</b>
@@ -206,7 +209,7 @@ footer{margin-top:3rem;color:var(--muted);font-size:.9rem;border-top:1px solid v
 <p>שני הפוסטולטים האחרונים נראים כמו שני חוקים שונים. <b>התפתחות</b> היא חלקה, צפויה והפיכה. <b>מדידה</b> היא פתאומית, אקראית ובלתי הפיכה. מכניקת הקוונטים מחליפה ביניהן, והשאלה איך שתיהן מתיישבות נקראת "בעיית המדידה".</p>
 <p>ההסבר המקובל: מכשיר המדידה נמצא <b>מחוץ</b> למערכת. בזמן המדידה המערכת כבר לא סגורה, ולכן פוסטולט 4 לא חל עליה.</p>
 
-<footer>גרסה 4.</footer>
+<footer><a href="index.html">← חזרה לכל העמודים</a></footer>
 </main>
 <script>
 (function(){

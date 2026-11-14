@@ -64,6 +64,7 @@ p{margin:.55rem 0}
 .presets{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.7rem;align-items:center}
 .presets span{color:var(--muted);font-size:.95rem}
 .presets button{font-family:"STIX Two Text",serif;font-size:1rem;padding:.25rem .7rem;border-radius:8px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;direction:ltr}
+.presets button[dir="rtl"]{direction:rtl;font-family:"Frank Ruhl Libre",serif}
 .presets button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .bdesc{text-align:center;min-height:1.9em;margin:.5rem 0 .2rem;font-size:1.05rem}
 .note{background:var(--accent-soft);border-radius:8px;padding:.75rem .95rem;margin:1rem 0}
@@ -75,6 +76,19 @@ ol{padding-inline-start:1.4rem} li{margin:.35rem 0}
 footer{margin-top:3rem;color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:1rem}
 a.x{color:var(--accent);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
 a.x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mat{display:inline-flex;align-items:stretch;vertical-align:middle;direction:ltr}
+.mat::before,.mat::after{content:"";width:.32em;border:1.6px solid currentColor}
+.mat::before{border-right:0;border-radius:.7em 0 0 .7em}
+.mat::after{border-left:0;border-radius:0 .7em .7em 0}
+.g2{display:grid;grid-template-columns:repeat(2,auto);gap:.15em .9em;padding:.2em .45em;text-align:center;font-size:.85em}
+.cases{width:100%;border-collapse:collapse;margin:.6rem 0;font-size:1rem}
+.cases td,.cases th{padding:.45rem;border-bottom:1px solid var(--rule);text-align:right;vertical-align:top}
+.cases th{font-family:"Secular One",sans-serif;font-weight:400;color:var(--muted);border-bottom:2px solid var(--accent)}
+.nread{display:grid;grid-template-columns:1fr;gap:.5rem;margin:.7rem 0}
+.nread>div{background:var(--accent-soft);border-radius:8px;padding:.45rem .7rem}
+.nread small{display:block;color:var(--muted);font-size:.9rem}
+.nv{direction:ltr;text-align:center;font-family:"STIX Two Text",serif;font-size:1.05rem;margin-top:.2rem;white-space:nowrap;overflow-x:auto}
+.nv .mat .g2{font-size:.95em}
 footer a{color:var(--accent)}
 </style>
 </head>
@@ -139,7 +153,7 @@ footer a{color:var(--accent)}
 <h2>מה כדאי לנסות</h2>
 <ol>
 <li><b>הזז רק את הפאזה הגלובלית.</b> שני השעונים מסתובבים יחד, אבל הנקודה על הכדור וההסתברויות לא זזות. זה המידע שמרחב הילברט מחזיק והכדור זורק.</li>
-<li><b>הזז רק את הפאזה היחסית.</b> אורכי החצים לא משתנים, ולכן גם ההסתברויות. אבל הנקודה מסתובבת סביב ציר z, וזה בדיוק מה ש<a class="x" href="pauli-bloch.html#s-demo">שער S</a> עושה.</li>
+<li><b>הזז רק את הפאזה היחסית.</b> אורכי החצים לא משתנים, ולכן גם ההסתברויות. אבל הנקודה מסתובבת סביב ציר z, וזה בדיוק מה ש<a class="x" href="operators.html#s-demo">שער S</a> עושה.</li>
 <li><b>אפס את שתי הפאזות והזז את החלוקה.</b> שני החצים נשארים אופקיים, כלומר האמפליטודות ממשיות, והנקודה נעה רק על מעגל x-z. ב-θ = 90° (חצי הדרך על הכדור) ההסתברויות הן 50/50, כלומר $|+⟩$.</li>
 </ol>
 
@@ -150,6 +164,46 @@ footer a{color:var(--accent)}
 <li><b>הפאזה הגלובלית.</b> שום ניסוי לא מבחין בה, כי כל הסתברות תלויה רק באורכים ובהפרש הפאזות.</li>
 </ol>
 <p>נשארים שני מספרים: קו רוחב וקו אורך. כלומר נקודה על פני כדור.</p>
+
+<h2 id="spin-n">ספין לאורך כיוון כללי n</h2>
+<p>נרצה למדוד את הספין לאורך וקטור יחידה כלשהו, כלומר כיוון כלשהו במרחב התלת-ממדי. את וקטור היחידה הזה נסמן ב-$n$.</p>
+<p>כיוון במרחב נקבע על ידי שתי זוויות, אותן זוויות של ספירת בלוך:</p>
+<ul>
+<li><b>θ</b>: הזווית בין $n$ לבין ציר z. ב-0° הוא מצביע ישר למעלה, וב-180° ישר למטה.</li>
+<li><b>φ</b>: הזווית סביב ציר z. מטילים את $n$ על מישור x-y (קו המשווה) ומודדים את הזווית של הצל מציר x.</li>
+</ul>
+<p>שלושת הרכיבים של $n$ מתקבלים מהזוויות כך:</p>
+<div class="formula">n = ( sin θ cos φ,&nbsp; sin θ sin φ,&nbsp; cos θ )</div>
+<p>נסמן גם $σ = (X, Y, Z)$: "וקטור" ששלושת הרכיבים שלו הם שלוש <a class="x" href="pauli-bloch.html">מטריצות פאולי</a>. המכפלה הסקלרית שלהם, בדיוק כמו בין שני וקטורים רגילים, נותנת מטריצה אחת:</p>
+<div class="formula">σ<sub>n</sub> = n · σ<br>= sin θ cos φ · X<br>+ sin θ sin φ · Y + cos θ · Z</div>
+<div class="formula">σ<sub>n</sub> = <span class="mat"><span class="g2"><span>cos θ</span><span>e<sup>−iφ</sup> sin θ</span><span>e<sup>iφ</sup> sin θ</span><span>−cos θ</span></span></span></div>
+<p><b>מה זה אומר:</b> $σ<sub>n</sub>$ היא <b>מדידת ספין לאורך הכיוון n</b>. $Z$ שואלת "למעלה או למטה לאורך z?", ו-$σ<sub>n</sub>$ שואלת את אותה שאלה לאורך כל כיוון שבוחרים, כמו מגנט שטרן-גרלך שמסובבים לזווית כלשהי.</p>
+<p><b>הערכים העצמיים תמיד $+1$ ו-$−1$</b>, לכל כיוון. רק הווקטורים העצמיים משתנים. זו בדיוק המסקנה ש<a class="x" href="pauli-bloch.html#diag">לכסון שומר את הערכים העצמיים</a>: זה אותו אופרטור, מכוון לציר אחר. הווקטורים העצמיים הם:</p>
+<div class="formula">|0<sub>n</sub>⟩ = cos(θ/2) |0⟩ + e<sup>iφ</sup> sin(θ/2) |1⟩</div>
+<div class="formula">|1<sub>n</sub>⟩ = sin(θ/2) |0⟩ − e<sup>iφ</sup> cos(θ/2) |1⟩</div>
+<p>$|0<sub>n</sub>⟩$ (ערך עצמי $+1$) הוא הנקודה על הכדור בכיוון n, ו-$|1<sub>n</sub>⟩$ (ערך עצמי $−1$) הוא הנקודה הנגדית. שים לב ש-$|0<sub>n</sub>⟩$ הוא בדיוק הנוסחה של מצב כללי מתחילת העמוד, בלי הפאזה הגלובלית. כלומר <b>כל מצב של קיוביט הוא "ספין למעלה" לאורך כיוון כלשהו</b>.</p>
+
+<section class="stage" aria-label="הכיוון n על ספירת בלוך">
+  <svg id="nsph" viewBox="0 0 360 330" role="img" aria-label="ספירת בלוך עם הכיוון n, הזווית θ מציר z והזווית φ סביב ציר z" style="display:block;width:100%;max-width:440px;margin:0 auto;direction:ltr"></svg>
+  <div class="ctrl">
+    <label for="nth">θ</label><input type="range" id="nth" min="0" max="180" step="0.5" value="60"><output id="nthv"></output>
+    <label for="nph">φ</label><input type="range" id="nph" min="0" max="360" step="0.5" value="30"><output id="nphv"></output>
+  </div>
+  <div class="nread">
+    <div><small>הכיוון $n$</small><div class="nv" id="nvec"></div></div>
+    <div><small>$σ<sub>n</sub>$</small><div class="nv" id="nmat"></div></div>
+    <div><small>$|0<sub>n</sub>⟩$, ערך עצמי $+1$</small><div class="nv" id="nket"></div></div>
+  </div>
+  <div class="bdesc" id="ndesc" aria-live="polite"></div>
+  <div class="presets"><span>מקרים פרטיים:</span>
+    <button type="button" dir="rtl" data-n="0,0">לאורך <bdi>z</bdi></button>
+    <button type="button" dir="rtl" data-n="90,0">לאורך <bdi>x</bdi></button>
+    <button type="button" dir="rtl" data-n="90,90">לאורך <bdi>y</bdi></button>
+    <button type="button" dir="rtl" data-n="45,0">בין <bdi>x</bdi> ל-<bdi>z</bdi></button>
+    <button type="button" dir="rtl" data-n="180,0">לאורך <bdi dir="ltr">−z</bdi></button>
+  </div>
+</section>
+<p>המקרה "בין x ל-z" הוא <a class="x" href="pauli-bloch.html">הדמרד</a>. כמו כל $σ<sub>n</sub>$, כשמפעילים אותו כשער הוא חצי סיבוב סביב הכיוון n שלו, ולכן H מסובבת סביב האלכסון שבין x ל-z.</p>
 
 <h2 id="global">פאזה גלובלית: למה <span class="m">R(90°)</span> ו-<span class="m">Y</span> נראים זהים</h2>
 <p>על הכדור, $R(90°)$ ו-$Y$ עושים בדיוק את אותו סיבוב. זה לא במקרה, וזו בדיוק המשמעות של "עד כדי פאזה גלובלית": <b>הכדור לא מסוגל להראות פאזה גלובלית</b>, כי הוא בנוי מהמידע שאפשר למדוד בלבד. אם שני דברים נראים זהים על הכדור, אז שום ניסוי לא יבדיל ביניהם.</p>
@@ -164,7 +218,7 @@ footer a{color:var(--accent)}
 <div class="note"><b>וזה גם מה שהמספרים בטבלאות אומרים.</b> כשכתוב $X|+i⟩ = i·|−i⟩$, ה-$i$ שלפני המצב מסובב את שני השעונים יחד ב-90°. המצב שהתקבל הוא $|−i⟩$, והנקודה על הכדור נמצאת בדיוק ב-$|−i⟩$. ובמצבים שעל ציר הסיבוב, כמו $X|−⟩ = −|−⟩$, המספר שלפני המצב הוא הערך העצמי: המצב "חוזר לעצמו", רק עם השעונים מסובבים.</div>
 
 <h2 id="real-slice">דוגמה: הפרוסה הממשית ומעגל x-z</h2>
-<p>לדוגמה, נסתכל על המקרה שבו נגביל את עצמנו לאמפליטודות <b>ממשיות</b>. במקרה הזה אפשר לצייר את מרחב הילברט כמישור רגיל: הציר האופקי הוא האמפליטודה של $|0⟩$, והציר האנכי הוא האמפליטודה של $|1⟩$. מצב הוא חץ באורך 1 במישור הזה, ו<a class="x" href="pauli-bloch.html#s-demo">מטריצת הסיבוב</a> $R(θ)$ מסובבת אותו.</p>
+<p>לדוגמה, נסתכל על המקרה שבו נגביל את עצמנו לאמפליטודות <b>ממשיות</b>. במקרה הזה אפשר לצייר את מרחב הילברט כמישור רגיל: הציר האופקי הוא האמפליטודה של $|0⟩$, והציר האנכי הוא האמפליטודה של $|1⟩$. מצב הוא חץ באורך 1 במישור הזה, ו<a class="x" href="operators.html#s-demo">מטריצת הסיבוב</a> $R(θ)$ מסובבת אותו.</p>
 <p><b>במונחי הנוסחה:</b> אמפליטודה ממשית היא חץ שמונח על הקו האופקי של השעון, ימינה (פאזה 0°) או שמאלה (פאזה 180°). אחרי שמתעלמים מהפאזה הגלובלית, זה אומר:</p>
 <ul>
 <li><b>החלוקה θ חופשית</b>, מ-0° עד 180°.</li>
@@ -338,6 +392,81 @@ footer a{color:var(--accent)}
   }
   document.getElementById('beta').addEventListener('input',upd);
   document.querySelectorAll('.presets button[data-b]').forEach(function(btn){btn.addEventListener('click',function(){document.getElementById('beta').value=btn.dataset.b;upd();});});
+  upd();
+})();
+</script>
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg',F='STIX Two Text, serif';
+  function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function txt(p,x,y,s,col,size){var t=el('text',{x:x,y:y,fill:col,'font-family':F,'font-size':size||16,'text-anchor':'middle','dominant-baseline':'central'},p);t.textContent=s;return t;}
+  function k(t){return '<bdi dir="ltr" class="m">'+t+'</bdi>';}
+  var sv=document.getElementById('nsph'),C=[170,170],R=120,EX=[R,0],EY=[0.43*R,-0.26*R],EZ=[0,-R];
+  function pr(v){return [C[0]+v[0]*EX[0]+v[1]*EY[0]+v[2]*EZ[0],C[1]+v[0]*EX[1]+v[1]*EY[1]+v[2]*EZ[1]];}
+  function path(pts){return pts.map(function(q,i){return (i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1);}).join('');}
+  el('circle',{cx:C[0],cy:C[1],r:R,fill:'none',stroke:'var(--muted)','stroke-width':1.2},sv);
+  var eq=[];for(var i=0;i<=96;i++){var a=i/96*2*Math.PI;eq.push(pr([Math.cos(a),Math.sin(a),0]));}
+  el('path',{d:path(eq),fill:'none',stroke:'var(--muted)','stroke-width':.8,'stroke-dasharray':'4 4',opacity:.8},sv);
+  function axis(u,f,g){var a=pr(u.map(function(x){return x*f;})),b=pr(u.map(function(x){return -x*g;}));
+    el('line',{x1:b[0],y1:b[1],x2:a[0],y2:a[1],stroke:'var(--muted)','stroke-width':.8,'stroke-dasharray':'2 4'},sv);return a;}
+  var az=axis([0,0,1],1.16,1.1),ax=axis([1,0,0],1.18,1.12),ay=axis([0,1,0],1.75,1.4);
+  txt(sv,az[0]-12,az[1]+2,'z','var(--muted)',15);txt(sv,ax[0]+4,ax[1]-12,'x','var(--muted)',15);txt(sv,ay[0]+8,ay[1]-4,'y','var(--muted)',15);
+  var n0=pr([0,0,1]),s0=pr([0,0,-1]);
+  txt(sv,n0[0]+22,n0[1]-10,'|0⟩','var(--c0)',16);txt(sv,s0[0]+22,s0[1]+10,'|1⟩','var(--c1)',16);
+  var shadow=el('line',{stroke:'var(--muted)','stroke-width':1.2,'stroke-dasharray':'3 3'},sv);
+  var drop=el('line',{stroke:'var(--muted)','stroke-width':1,'stroke-dasharray':'2 3'},sv);
+  var thArc=el('path',{fill:'none',stroke:'var(--th)','stroke-width':2.2},sv);
+  var phArc=el('path',{fill:'none',stroke:'var(--ph)','stroke-width':2.2},sv);
+  var thLab=txt(sv,0,0,'θ','var(--th)',17), phLab=txt(sv,0,0,'φ','var(--ph)',17);
+  var anti=el('circle',{r:5,fill:'var(--paper)',stroke:'var(--pt)','stroke-width':1.6},sv);
+  var antiLab=txt(sv,0,0,'|1ₙ⟩','var(--pt)',15);
+  var arr=el('line',{x1:C[0],y1:C[1],stroke:'var(--pt)','stroke-width':3.5,'stroke-linecap':'round'},sv);
+  var dot=el('circle',{r:7,fill:'var(--pt)'},sv);
+  var nLab=txt(sv,0,0,'n','var(--pt)',18);
+  function f2(x){var v=Math.round(x*100)/100;if(Object.is(v,-0)||v===0)v=0;return (v<0?'−':'')+Math.abs(v).toFixed(2);}
+  function cx(re,im){var r=Math.round(re*100)/100,i=Math.round(im*100)/100;
+    if(i===0)return f2(r); if(r===0)return (i===1?'':i===-1?'−':f2(i))+'i';
+    return f2(r)+(i<0?' − ':' + ')+(Math.abs(i)===1?'':Math.abs(i).toFixed(2))+'i';}
+  function mat(a,b,c,d){return '<span class="mat"><span class="g2"><span>'+a+'</span><span>'+b+'</span><span>'+c+'</span><span>'+d+'</span></span></span>';}
+  var DESC={'0,0':'לאורך z: '+k('σₙ = Z')+', ו-'+k('|0ₙ⟩ = |0⟩'),
+    '90,0':'לאורך x: '+k('σₙ = X')+', ו-'+k('|0ₙ⟩ = |+⟩'),
+    '90,90':'לאורך y: '+k('σₙ = Y')+', ו-'+k('|0ₙ⟩ = |+i⟩'),
+    '45,0':'באמצע בין x ל-z: '+k('σₙ = (X + Z)/√2 = H')+', ו-'+k('|0ₙ⟩')+' בין '+k('|0⟩')+' ל-'+k('|+⟩'),
+    '180,0':'לאורך '+k('−z')+': '+k('σₙ = −Z')+', ו-'+k('|0ₙ⟩ = |1⟩')+'. ספין "למעלה" לאורך '+k('−z')+' הוא ספין "למטה" לאורך z'};
+  function fmt(v){return (Math.round(v*10)/10).toString().replace(/\.0$/,'')+'°';}
+  function upd(){
+    var td=+document.getElementById('nth').value,pd=+document.getElementById('nph').value;
+    var t=td*Math.PI/180,p=pd*Math.PI/180;
+    var n=[Math.sin(t)*Math.cos(p),Math.sin(t)*Math.sin(p),Math.cos(t)];
+    var tip=pr(n),foot=pr([n[0],n[1],0]),m=pr(n.map(function(x){return -x;}));
+    arr.setAttribute('x2',tip[0]);arr.setAttribute('y2',tip[1]);dot.setAttribute('cx',tip[0]);dot.setAttribute('cy',tip[1]);
+    var dx=tip[0]-C[0],dy=tip[1]-C[1],L=Math.hypot(dx,dy)||1;
+    nLab.setAttribute('x',tip[0]+dx/L*18+(L<2?14:0));nLab.setAttribute('y',tip[1]+dy/L*18);
+    anti.setAttribute('cx',m[0]);anti.setAttribute('cy',m[1]);
+    antiLab.setAttribute('x',m[0]-dx/L*22+(L<2?24:0));antiLab.setAttribute('y',m[1]-dy/L*22);
+    shadow.setAttribute('x1',C[0]);shadow.setAttribute('y1',C[1]);shadow.setAttribute('x2',foot[0]);shadow.setAttribute('y2',foot[1]);
+    drop.setAttribute('x1',tip[0]);drop.setAttribute('y1',tip[1]);drop.setAttribute('x2',foot[0]);drop.setAttribute('y2',foot[1]);
+    var vis=Math.sin(t)>0.02;shadow.setAttribute('opacity',vis?1:0);drop.setAttribute('opacity',vis?1:0);
+    var ta=[],r=0.38;for(var i=0;i<=40;i++){var u=t*i/40;ta.push(pr([r*Math.sin(u)*Math.cos(p),r*Math.sin(u)*Math.sin(p),r*Math.cos(u)]));}
+    thArc.setAttribute('d',td>0.5?path(ta):'');
+    var tm=pr([0.5*Math.sin(t/2)*Math.cos(p),0.5*Math.sin(t/2)*Math.sin(p),0.5*Math.cos(t/2)]);
+    thLab.setAttribute('x',tm[0]+8);thLab.setAttribute('y',tm[1]-6);thLab.setAttribute('opacity',td>8?1:0);
+    var pa=[],rp=0.42;for(var j=0;j<=40;j++){var w=p*j/40;pa.push(pr([rp*Math.cos(w),rp*Math.sin(w),0]));}
+    var phOn=pd>0.5&&vis;phArc.setAttribute('d',phOn?path(pa):'');
+    var pm=pr([0.58*Math.cos(p/2),0.58*Math.sin(p/2),0]);
+    phLab.setAttribute('x',pm[0]);phLab.setAttribute('y',pm[1]+8);phLab.setAttribute('opacity',phOn&&pd>10?1:0);
+    document.getElementById('nthv').textContent=fmt(td);document.getElementById('nphv').textContent=fmt(pd);
+    document.getElementById('nvec').innerHTML='('+f2(n[0])+', '+f2(n[1])+', '+f2(n[2])+')';
+    document.getElementById('nmat').innerHTML=mat(f2(Math.cos(t)),cx(Math.sin(t)*Math.cos(p),-Math.sin(t)*Math.sin(p)),cx(Math.sin(t)*Math.cos(p),Math.sin(t)*Math.sin(p)),f2(-Math.cos(t)));
+    var a0=Math.cos(t/2),b0=Math.sin(t/2);
+    var c1=cx(b0*Math.cos(p),b0*Math.sin(p));
+    var c1s=(Math.round(b0*Math.sin(p)*100)!==0&&Math.round(b0*Math.cos(p)*100)!==0)?'('+c1+')':c1;
+    document.getElementById('nket').innerHTML=f2(a0)+' |0⟩ + '+c1s+' |1⟩';
+    var key=td+','+pd; document.getElementById('ndesc').innerHTML=DESC[key]?'<b>המקרה:</b> '+DESC[key]:'';
+  }
+  ['nth','nph'].forEach(function(id){document.getElementById(id).addEventListener('input',upd);});
+  document.querySelectorAll('.presets button[data-n]').forEach(function(b){b.addEventListener('click',function(){
+    var v=b.dataset.n.split(',');document.getElementById('nth').value=v[0];document.getElementById('nph').value=v[1];upd();});});
   upd();
 })();
 </script>
